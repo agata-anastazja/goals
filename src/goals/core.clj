@@ -1,6 +1,6 @@
-(ns goals.core)
+(ns goals.core
+    (:require [clojure.java.io :as io]))
 
-(defn add-goal [goal]
-    {:status  200
-    :headers {"Content-Type" "text/html"}
-    :body    goal})
+(defn add-goal [request]
+    (prn request)
+    (with-open [r (io/reader (:body request))] (prn (slurp r)))  )

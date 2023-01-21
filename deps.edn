@@ -2,7 +2,9 @@
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
         http-kit/http-kit {:mvn/version "2.7.0-alpha1"}
         ring/ring {:mvn/version "1.9.6"}
-        compojure/compojure {:mvn/version "1.7.0"}}
+        ring/ring-json {:mvn/version "0.5.1"}
+        compojure/compojure {:mvn/version "1.7.0"}
+        ring/ring-defaults {:mvn/version  "0.3.2"}}
  :aliases
  {:run-m {:main-opts ["-m" "goals.main"]}
   :run-x {:ns-default goals.main

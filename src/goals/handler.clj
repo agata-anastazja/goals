@@ -12,6 +12,9 @@
         [reitit.interceptor.sieppari :as sieppari]))
 
 
+(defn system-interceptor
+  [ds]
+  {:enter #(assoc-in % [:request :ds] ds)})
 
 (def routes
     [["/add" {:post core/add-goal 
@@ -22,7 +25,8 @@
                             :headers {"Content-Type" "text/html"}
                             :body    "Pew pew!"})}]])
 
-(def server
+(defn server 
+    [ds]
   (http/ring-handler
     (http/router routes
                  {:data {:coercion     malli/coercion
@@ -41,7 +45,8 @@
                             ;; coerce different bit of the response ie "1" to 1, json to map
                             (coercion/coerce-exceptions-interceptor)
                             (coercion/coerce-response-interceptor)
-                            (coercion/coerce-request-interceptor)]}})
+                            (coercion/coerce-request-interceptor)
+                            (system-interceptor ds)]}})
     (ring/routes
       (ring/create-default-handler
         {:not-found (constantly {:status  404

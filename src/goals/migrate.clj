@@ -2,9 +2,9 @@
   (:require [ragtime.jdbc :as jdbc]
             [ragtime.repl :as repl]))
 
-(def config
-  {:datastore  (jdbc/sql-database {:connection-uri "jdbc:sqlite:goals.db"})
+(defn config [url]
+  {:datastore  (jdbc/sql-database {:connection-uri url})
    :migrations (jdbc/load-resources "migrations")})
 
-(defn migrate[]
-    (repl/migrate config))
+(defn migrate[url]
+    (repl/migrate (config url)))

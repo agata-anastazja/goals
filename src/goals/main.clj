@@ -6,5 +6,5 @@
 
 (defn -main
   [& args]
-  (server/run-server #'handler/app-routes {:port 8080}))
+  (server/run-server #'handler/app {:port 8080}))
 

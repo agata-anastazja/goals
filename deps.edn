@@ -8,7 +8,8 @@
         metosin/reitit-sieppari      {:mvn/version "0.5.18"}
         metosin/reitit-middleware    {:mvn/version "0.5.18"}
         metosin/muuntaja             {:mvn/version "0.6.8"}
-        ring/ring-jetty-adapter      {:mvn/version "1.9.6"}}
+        ring/ring-jetty-adapter      {:mvn/version "1.9.6"}
+        dev.weavejester/ragtime      {:mvn/version "0.9.3"}}
  :aliases
  {:run-m {:main-opts ["-m" "goals.main"]}
   :run-x {:ns-default goals.main

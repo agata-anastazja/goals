@@ -1,12 +1,14 @@
 {:paths ["src" "resources"]
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
-        http-kit/http-kit {:mvn/version "2.7.0-alpha1"}
-        ring/ring {:mvn/version "1.9.6"}
-        ring/ring-json {:mvn/version "0.5.1"}
-        compojure/compojure {:mvn/version "1.7.0"}
-        ring/ring-defaults {:mvn/version  "0.3.2"}
-        ring/ring-mock {:mvn/version "0.4.0"}
-        org.xerial/sqlite-jdbc {:mvn/version "3.40.0.0"}}
+        org.xerial/sqlite-jdbc {:mvn/version "3.40.0.0"}
+        metosin/reitit-core          {:mvn/version "0.5.18"}
+        metosin/reitit-http          {:mvn/version "0.5.18"}
+        metosin/reitit-interceptors  {:mvn/version "0.5.18"}
+        metosin/reitit-malli         {:mvn/version "0.5.18"}
+        metosin/reitit-sieppari      {:mvn/version "0.5.18"}
+        metosin/reitit-middleware    {:mvn/version "0.5.18"}
+        metosin/muuntaja             {:mvn/version "0.6.8"}
+        ring/ring-jetty-adapter      {:mvn/version "1.9.6"}}
  :aliases
  {:run-m {:main-opts ["-m" "goals.main"]}
   :run-x {:ns-default goals.main

@@ -2,9 +2,15 @@
   (:gen-class)
   (:require 
     [goals.handler :as handler]
-    [org.httpkit.server :as server]))
+    [ring.adapter.jetty :as jetty]))
+
+
 
 (defn -main
   [& args]
-  (server/run-server #'handler/app {:port 8080}))
+  (jetty/run-jetty (var handler/server)
+                 {:host   "0.0.0.0"
+                  :port   8080
+                  :join?  false
+                  :async? true}))
 

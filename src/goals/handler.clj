@@ -1,23 +1,50 @@
 (ns goals.handler
-    (:require  
+  (:require 
         [goals.core :as core]
-        [ring.middleware.json :as middleware]
-        [ring.middleware.params :refer [wrap-params]]
-        [ring.middleware.defaults :refer [api-defaults wrap-defaults]]
-        [ring.handler.dump        :refer [handle-dump]]
-        [compojure.core :refer :all]))
+        [muuntaja.core :as m]
+        [reitit.ring :as ring]
+        [reitit.http :as http]
+        [reitit.coercion.malli :as malli]
+        [reitit.http.coercion :as coercion]
+        [reitit.http.interceptors.parameters :as parameters]
+        [reitit.http.interceptors.muuntaja :as muuntaja]
+        [reitit.http.interceptors.exception :as exception]
+        [reitit.interceptor.sieppari :as sieppari]))
 
 
-(defroutes  app-routes 
-    (GET "/" []
-     {:status  200
-    :headers {"Content-Type" "text/html"}
-    :body    "Pew pew!"})
-    (POST "/" req (core/add-goal (:body req))))
 
-(def app
-    (->  app-routes
-        (middleware/wrap-json-body  {:keywords? true })
-        wrap-params
-        middleware/wrap-json-response
-        (wrap-defaults api-defaults)))
+(def routes
+    [["/add" {:post core/add-goal 
+        :parameters {:body [:map {:closed false}
+         [:description :string]
+         [:level :int]]}}]
+        ["/" {:get (fn[req] {:status  200
+                            :headers {"Content-Type" "text/html"}
+                            :body    "Pew pew!"})}]])
+
+(def server
+  (http/ring-handler
+    (http/router routes
+                 {:data {:coercion     malli/coercion
+                         :muuntaja     m/instance
+                         :interceptors [
+                            ;; query params -> request map
+                            (parameters/parameters-interceptor)
+                            ;; verify format of data
+                            (muuntaja/format-negotiate-interceptor)
+                            ;; verify response data
+                            (muuntaja/format-response-interceptor)
+                            ;; human readable error
+                            (exception/exception-interceptor)
+                            ;; encoding
+                            (muuntaja/format-request-interceptor)
+                            ;; coerce different bit of the response ie "1" to 1, json to map
+                            (coercion/coerce-exceptions-interceptor)
+                            (coercion/coerce-response-interceptor)
+                            (coercion/coerce-request-interceptor)]}})
+    (ring/routes
+      (ring/create-default-handler
+        {:not-found (constantly {:status  404
+                                 :headers {"Content-Type" "application/json"}
+                                 :body    "{\"message\": \"Took a wrong turn?\"}"})}))
+    {:executor sieppari/executor}))

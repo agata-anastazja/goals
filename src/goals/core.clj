@@ -3,8 +3,7 @@
 
 (defn save-goal [])
 
-(defn add-goal [body]
-   (let [{:keys [description level]} body]
-     description
-    ;; save data
-     "successfully saved goal") )
+(defn add-goal [{{{:keys [description level]} :body} :parameters}]
+     {:status  200
+      :headers {"Content-Type" "text/html"}
+      :body   (str description "! Pew pew!")})

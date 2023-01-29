@@ -10,10 +10,11 @@
 
 (defn -main
   [& args]
-  (migrate/migrate "jdbc:sqlite:goals.db")
-  (jetty/run-jetty (handler/server (jdbc/get-datasource {:jdbcUrl "jdbc:sqlite:goals.db"}))
-                 {:host   "0.0.0.0"
-                  :port   8080
-                  :join?  false
-                  :async? true}))
+  (let [connection-url "jdbc:postgresql://127.0.0.1:5432/goals"]
+   (migrate/migrate connection-url )
+   (jetty/run-jetty (handler/server (jdbc/get-datasource {:jdbcUrl connection-url}))
+                    {:host   "0.0.0.0"
+                     :port   8080
+                     :join?  false
+                     :async? true})))
 

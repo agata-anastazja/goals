@@ -10,7 +10,8 @@
         metosin/muuntaja             {:mvn/version "0.6.8"}
         ring/ring-jetty-adapter      {:mvn/version "1.9.6"}
         dev.weavejester/ragtime      {:mvn/version "0.9.3"}
-        com.github.seancorfield/next.jdbc {:mvn/version "1.3.847"}}
+        com.github.seancorfield/next.jdbc {:mvn/version "1.3.847"}
+        org.postgresql/postgresql {:mvn/version "42.5.1"}}
  :aliases
  {:run-m {:main-opts ["-m" "goals.main"]}
   :run-x {:ns-default goals.main

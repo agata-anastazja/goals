@@ -7,7 +7,7 @@
     [next.jdbc :as jdbc]))
 
 
-
+;; env (System/getEnv "GOALS_ENV")
 (defn -main
   [& args]
   (let [connection-url "jdbc:postgresql://127.0.0.1:5432/goals"]

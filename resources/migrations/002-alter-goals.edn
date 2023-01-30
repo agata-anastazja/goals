@@ -1,0 +1,20 @@
+{:up   ["ALTER TABLE  goals 
+         ADD COLUMN id UUID,
+         ADD COLUMN time_created timestamp,
+         ADD COLUMN original_deadline timestamp,
+         ADD COLUMN last_updated timestamp,
+         ADD COLUMN goal_parents UUID[],
+         ADD COLUMN completion_percent int,
+         ADD COLUMN completion_comments TEXT,
+         ADD COLUMN active BOOLEAN,
+         ADD COLUMN date_completed timestamp;"]
+ :down ["ALTER TABLE  goals 
+         DROP COLUMN id UUID,
+         DROP COLUMN time_created timestamp,
+         DROP COLUMN original_deadline timestamp,
+         DROP COLUMN last_updated timestamp,
+         DROP COLUMN goal_parents UUID[],
+         DROP COLUMN completion_percent int
+         DROP COLUMN completion_comments TEXT,
+         DROP COLUMN active BOOLEAN,
+         DROP COLUMN date_completed timestamp;;"]}

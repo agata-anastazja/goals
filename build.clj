@@ -4,7 +4,7 @@
 
 (def lib 'net.clojars.goals/api)
 (def version "0.1.0-SNAPSHOT")
-(def main 'goals.api)
+(def main 'goals.main)
 
 (defn test "Run the tests." [opts]
   (bb/run-tests opts))

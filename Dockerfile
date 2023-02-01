@@ -6,6 +6,10 @@ WORKDIR /app
 
 COPY . /app
 
-CMD ["clojure", "-M:run-m"]
+# Build a jar
+RUN clojure -T:build ci
 
+RUN cp target/*-SNAPSHOT.jar /app.jar
+
+CMD ["java", "-jar", "/app.jar", "target/api-0.1.0-SNAPSHOT.jar"]
 EXPOSE 8080

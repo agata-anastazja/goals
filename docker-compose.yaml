@@ -15,9 +15,7 @@ services:
     networks:
       - goals-net
     environment:
-      - DB_HOST=postgres
-      - DB_USER=goals
-      - DB_PASSWORD=goals
+      - DB_JDBC_URI=jdbc:sqlite:goals-test.db
     depends_on:
       - postgres
     restart:

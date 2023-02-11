@@ -11,7 +11,7 @@ services:
       POSTGRES_USER: goals
       POSTGRES_PASSWORD: goals
   goals-api:
-    image: goals
+    image: agatasumowska/goals
     networks:
       - goals-net
     environment:

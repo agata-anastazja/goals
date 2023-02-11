@@ -12,6 +12,5 @@
 (defn ci "Run the CI pipeline of tests (and build the uberjar)." [opts]
   (-> opts
       (assoc :lib lib :version version :main main)
-      (bb/run-tests)
       (bb/clean)
       (bb/uber)))

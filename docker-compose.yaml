@@ -1,0 +1,34 @@
+version: '3'
+services:
+  postgres:
+    image: docker.io/library/postgres:alpine
+    networks:
+      - goals-net
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: goals
+      POSTGRES_USER: goals
+      POSTGRES_PASSWORD: goals
+  goals-api:
+    image: goals
+    networks:
+      - goals-net
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=goals
+      - DB_PASSWORD=goals
+    depends_on:
+      - postgres
+    restart:
+      always
+    ports:
+      - "8080:8080"
+      
+
+    
+networks:
+  goals-net:
+
+volumes:
+  pgdata:

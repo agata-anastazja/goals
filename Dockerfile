@@ -1,6 +1,6 @@
-FROM clojure:latest
+FROM eclipse-temurin:19-alpine
 
-ENV GOALS_ENV = prod
+COPY target/api-0.1.0-SNAPSHOT.jar .
 
 WORKDIR /app
 

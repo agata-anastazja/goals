@@ -13,6 +13,7 @@
  
 (java.util.TimeZone/setDefault (java.util.TimeZone/getTimeZone "UTC")) 
 (defn now [] (new java.util.Date))
+;; clojure.java.time
 (def df (java.text.SimpleDateFormat. "yyyy-MM-dd"))
  
 (defn save-goal [{{{:keys [description level deadline goal-parents]} :body} :parameters
@@ -33,7 +34,8 @@
 (defn add-goal [req] 
   (try
     (do
-      (save-goal req)
+      ;; parse-goal
+      (save-goal req) ;; takes goal
       {:status  200
        :headers {"Content-Type" "text/html"}
        :body   (str "Goal saved! Pew pew!")})

@@ -17,5 +17,7 @@ jobs:
           # The value must indicate a particular version of the tool, or use 'latest'
           # to always provision the latest version
           cli: latest
+      - name: Run tests
+        run: clojure -T:build test
       - name: Build a jar
         run: clojure -T:build ci

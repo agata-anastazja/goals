@@ -1,0 +1,10 @@
+version: '3'
+services:
+  postgres:
+    image: docker.io/library/postgres:alpine
+    # networks:
+    #   - goals-net
+    environment:
+      POSTGRES_DB: goals
+      POSTGRES_USER: goals
+      POSTGRES_PASSWORD: goals

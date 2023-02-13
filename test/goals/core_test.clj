@@ -24,3 +24,18 @@
         
 ;;       (is (= 200 (:status result))))
 ;;       (io/delete-file "goals-test.db")))
+
+;; run migration
+;; run core/add-goal
+;; run core/get-goal
+
+(comment
+  (def uri "jdbc:postgresql://127.0.0.1:5432/goals?user=postgres&password=postgres" )
+  (migrate/migrate uri)
+  (def ds (jdbc/get-datasource {:jdbcUrl uri}))
+  (core/save-goal {:description "Have fun doing side projects"
+                   :level 1
+                   :deadline "2023-01-01"}
+                  ds)
+  (core/get-goal)
+  )

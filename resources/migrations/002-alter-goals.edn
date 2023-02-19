@@ -3,7 +3,7 @@
          ADD COLUMN created_at timestamp,
          ADD COLUMN last_updated timestamp,
          ADD COLUMN deadline timestamp,
-         ADD COLUMN goal_parents varchar[],
+         ADD COLUMN goal_parent UUID,
          ADD COLUMN completion_percent int,
          ADD COLUMN completion_comments TEXT,
          ADD COLUMN active BOOLEAN,
@@ -13,7 +13,7 @@
          DROP COLUMN deadline timestamp,
          DROP COLUMN created_at timestamp,
          DROP COLUMN last_updated timestamp,
-         DROP COLUMN goal_parents varchar[],
+         DROP COLUMN goal_parent UUID,
          DROP COLUMN completion_percent int
          DROP COLUMN completion_comments TEXT,
          DROP COLUMN active BOOLEAN,

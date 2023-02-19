@@ -1,5 +1,6 @@
 resource "aws_security_group" "ecs_sg" {
-
+    vpc_id      = aws_vpc.goals_vpc.id
+    
     ingress {
         from_port       = 8080
         to_port         = 8080

@@ -8,3 +8,5 @@ services:
       POSTGRES_DB: goals
       POSTGRES_USER: goals
       POSTGRES_PASSWORD: goals
+    ports:
+      - "5432:5432"

@@ -31,7 +31,7 @@ Run the project, overriding the name to be greeted:
     Hello, Via-Main!
 
 Run the project's tests (they'll fail until you edit them):
-
+    docker compose -f docker-compose-test.yaml up
     $ clojure -T:build test
 
 Run the project's CI pipeline and build an uberjar (this will fail until you edit the tests to pass):

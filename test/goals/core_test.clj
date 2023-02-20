@@ -3,7 +3,6 @@
     [goals.core :as core]
     [goals.migrate :as migrate]
     [clojure.test :refer :all]
-    [goals.handler :refer :all]
     [next.jdbc :as jdbc]
     [next.jdbc.result-set :as rs]
     [clojure.java.io :as io]))
@@ -30,12 +29,15 @@
 ;; run core/get-goal
 
 (comment
-  (def uri "jdbc:postgresql://127.0.0.1:5432/goals?user=postgres&password=postgres" )
-  (migrate/migrate uri)
-  (def ds (jdbc/get-datasource {:jdbcUrl uri}))
+  (def uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals")
+  ;; (def uri "jdbc:sqlite:goals-test.db") 
+  (migrate/migrate uri) 
+  (def ds (jdbc/get-datasource {:jdbcUrl uri})) 
   (core/save-goal {:description "Have fun doing side projects"
                    :level 1
                    :deadline "2023-01-01"}
                   ds)
-  (core/get-goal)
+  (def rows (jdbc/execute! ds ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps}))
+  rows
+  ;; (core/get-goal)
   )

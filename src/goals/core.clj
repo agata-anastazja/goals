@@ -31,19 +31,18 @@
   values(?, ?, ?, ?, ?, ?, ?, ?)"
                            id created-at last-updated  description level goal-parents deadline active])))
 
-(defn save-goal [{:keys [description level deadline goal-parents]}
+(defn save-goal [{:keys [description level deadline goal-parent]}
                   ds]
 
   (let [id  (UUID/randomUUID)
         created-at (now)
-        last-updated created-at
+        last-updated created-at 
         deadline (.parse df deadline)
-        goal-parents (into-array String goal-parents)
         active true]
 
-    (jdbc/execute-one! ds ["INSERT INTO goals(id, created_at, last_updated, goal, goal_level, goal_parents, deadline, active)
+    (jdbc/execute-one! ds ["INSERT INTO goals(id, created_at, last_updated, goal, goal_level, goal_parent, deadline, active)
   values(?, ?, ?, ?, ?, ?, ?, ?)"
-                           id created-at last-updated  description level goal-parents deadline active])))
+                           id created-at last-updated  description level goal-parent deadline active])))
 
 (defn parse-add-goal-req [req]
   {:description "Have fun doing side projects"

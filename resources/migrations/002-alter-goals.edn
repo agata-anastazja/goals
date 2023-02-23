@@ -9,12 +9,12 @@
          ADD COLUMN active BOOLEAN,
          ADD COLUMN date_completed timestamp;"]
  :down ["ALTER TABLE  goals 
-         DROP COLUMN id UUID,
-         DROP COLUMN deadline timestamp,
-         DROP COLUMN created_at timestamp,
-         DROP COLUMN last_updated timestamp,
-         DROP COLUMN goal_parent UUID,
-         DROP COLUMN completion_percent int
-         DROP COLUMN completion_comments TEXT,
-         DROP COLUMN active BOOLEAN,
-         DROP COLUMN date_completed timestamp;;"]}
+         DROP COLUMN id,
+         DROP COLUMN deadline,
+         DROP COLUMN created_at,
+         DROP COLUMN last_updated,
+         DROP COLUMN goal_parent,
+         DROP COLUMN completion_percent,
+         DROP COLUMN completion_comments,
+         DROP COLUMN active,
+         DROP COLUMN date_completed;"]}

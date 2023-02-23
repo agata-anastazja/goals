@@ -32,6 +32,7 @@
   (def uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals")
   ;; (def uri "jdbc:sqlite:goals-test.db") 
   (migrate/migrate uri) 
+  (migrate/rollback uri)
   (def ds (jdbc/get-datasource {:jdbcUrl uri})) 
   (core/save-goal {:description "Have fun doing side projects"
                    :level 1

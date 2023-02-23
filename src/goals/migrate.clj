@@ -8,3 +8,6 @@
 
 (defn migrate[url]
     (repl/migrate (config url)))
+
+(defn rollback [url]
+  (repl/rollback (config url)))

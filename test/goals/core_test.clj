@@ -1,6 +1,6 @@
 (ns goals.core-test
   (:require [clojure.test :refer :all]
-            [goals.core :as goal]))
+            [goals.core :as core]))
 
 ;; TODO: determine the right way to test this
 ;;  :deadline deadline date from string
@@ -12,8 +12,11 @@
     (let [params {:description "Have fun doing side projects"
                   :level 1
                   :deadline "2023-01-01"}
-          result (goal/parse-goal params)]
-      (is (uuid? (:id result)))
+          now (core/now)
+          id (random-uuid)
+          result (core/parse-goal params id now)]
+      (is (= id (:id result)))
+      (is (= (:created-at result) now))
       (is (= (:description params) (:description result)))
       (is (= nil (:goal-parent result)))
       (is (= 1 (:level result)))

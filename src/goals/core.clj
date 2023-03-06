@@ -1,8 +1,7 @@
 (ns goals.core
     (:require
      [next.jdbc :as jdbc]
-     [next.jdbc.date-time])
-  (:import (java.util UUID)))
+     [next.jdbc.date-time]))
 
  
 (java.util.TimeZone/setDefault (java.util.TimeZone/getTimeZone "UTC")) 
@@ -17,25 +16,40 @@
   values(?, ?, ?, ?, ?, ?, ?, ?)"
                            id created-at last-updated  description level goal-parent deadline active]))
 
-(defn parse-goal [req]
-  (let [{:keys [description level deadline goal-parent]} req
-        id  (UUID/randomUUID)
-        created-at (now)
-        deadline (.parse df deadline)]
-  {:id id
-   :goal-parent goal-parent
-   :description description
-   :level level
-   :deadline deadline
-   :created-at created-at
-   :last-updated created-at
-   :active true }))
+(defn parse-goal 
+  ([req] (let [{:keys [description level deadline goal-parent]} req
+               id  (random-uuid)
+               created-at (now)
+               deadline (.parse df deadline)]
+           {:id id
+            :goal-parent goal-parent
+            :description description
+            :level level
+            :deadline deadline
+            :created-at created-at
+            :last-updated created-at
+            :active true}))
+  ([req id created-at]
+   (let [{:keys [description level deadline goal-parent]} req
+         deadline (.parse df deadline)]
+     {:id id
+      :goal-parent goal-parent
+      :description description
+      :level level
+      :deadline deadline
+      :created-at created-at
+      :last-updated created-at
+      :active true})))
 
 (defn add-goal [req] 
   (try
     (do
       ;; parse-goal
-      (let [goal (parse-goal req)
+      (let [
+            goal (parse-goal (->
+                              req
+                              :parameters
+                              :body )) 
             ds (:ds req)]
       (save-goal goal ds)) ;; takes goal
       {:status  200

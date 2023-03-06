@@ -15,7 +15,7 @@ services:
     networks:
       - goals-net
     environment:
-      - DB_JDBC_URI=jdbc:sqlite:goals-test.db
+      - DB_JDBC_URI=jdbc:sqlite:goals.db
     depends_on:
       - postgres
     restart:

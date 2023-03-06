@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <title>This is the title of the webpage!</title>
+  </head>
+  <body>
+    <label for="name">Goal description</label></br>
+
+    <input type="text" id="description" name="description"  size="10"> </br>
+    <label for="name">level</label></br>
+
+    <input type="text" id="level" name="level"  size="10"></br>
+    <label for="name">deadline</label></br>
+
+    <input type="text" id="deadline" name="deadline"  size="10"></br></br>
+    <button type="button" onclick="addGoal()">
+    Add goal
+    </button> 
+    <script>
+    async function addGoal() {
+        const description = document.getElementById("description").value;
+        const level = parseInt(document.getElementById("level").value);
+        const deadline = document.getElementById("deadline").value;
+        
+        const response = await fetch("/add", {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+            headers: {
+        "Content-Type": "application/json",
+        
+        },
+        body: JSON.stringify({description, level, deadline}), // body data type must match "Content-Type" header
+        });
+        }
+        </script>  
+  </body >
+</html>

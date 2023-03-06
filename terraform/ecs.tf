@@ -4,7 +4,7 @@ resource "aws_launch_configuration" "ecs_launch_config" {
     image_id             = "ami-07e394e4df20de8d2"
     iam_instance_profile = aws_iam_instance_profile.ecs_agent.name
     security_groups      = [aws_security_group.ecs_sg.id]
-    user_data            = "#!/bin/bash\necho ECS_CLUSTER=my-cluster >> /etc/ecs/ecs.config"
+    user_data            = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.ecs_cluster.name} >> /etc/ecs/ecs.config"
     instance_type        = "t2.micro"
 }
 
@@ -41,6 +41,8 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 
 resource "aws_ecs_task_definition" "service" {
   family = "goals-service"
+
+  
   container_definitions = jsonencode([
     {
       name      = "goals"
@@ -48,6 +50,7 @@ resource "aws_ecs_task_definition" "service" {
       cpu       = 1024
       memory    = 1024
       essential = true
+      environment = [{"name": "DB_JDBC_URI", "value": "jdbc:postgresql://${aws_db_instance.goals.endpoint}/goals?user=goals&password=goalsgoals" }]
       portMappings = [
         {
           containerPort = 8080

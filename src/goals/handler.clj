@@ -9,8 +9,7 @@
    [reitit.http.interceptors.parameters :as parameters]
    [reitit.http.interceptors.muuntaja :as muuntaja]
    [reitit.http.interceptors.exception :as exception]
-   [reitit.interceptor.sieppari :as sieppari]
-   [clojure.java.io :as io]))
+   [reitit.interceptor.sieppari :as sieppari]))
 
 
 (defn system-interceptor
@@ -24,10 +23,7 @@
                                 [:level :int]
                                 [:deadline :string]
                                 [:goal-parents {:optional true} [:vector :string]]]}}]
-   ["/goals/:id" {:get core/get-goal}]
-   ["/" {:get (fn [_] {:status  200
-                       :headers {"Content-Type" "text/html"}
-                       :body  (slurp (io/resource "index.html"))})}]])
+   ["/goals/:id" {:get core/get-goal}]])
 
 (defn server
   [ds]

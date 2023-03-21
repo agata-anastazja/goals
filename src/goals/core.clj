@@ -17,18 +17,9 @@
                            id created-at last-updated  description level goal-parent deadline active]))
 
 (defn parse-goal 
-  ([req] (let [{:keys [description level deadline goal-parent]} req
-               id  (random-uuid)
-               created-at (now)
-               deadline (.parse df deadline)]
-           {:id id
-            :goal-parent goal-parent
-            :description description
-            :level level
-            :deadline deadline
-            :created-at created-at
-            :last-updated created-at
-            :active true}))
+  ([req] (let [id  (random-uuid)
+               created-at (now)]
+          (parse-goal req id created-at)))
   ([req id created-at]
    (let [{:keys [description level deadline goal-parent]} req
          deadline (.parse df deadline)]
@@ -44,19 +35,30 @@
 (defn add-goal [req] 
   (try
     (do
-      ;; parse-goal
-      (let [
-            goal (parse-goal (->
+      (let [goal (parse-goal (->
                               req
                               :parameters
                               :body )) 
             ds (:ds req)]
-      (save-goal goal ds)) ;; takes goal
+      (save-goal goal ds);; takes goal
       {:status  200
-       :headers {"Content-Type" "text/html"}
-       :body   (str "Goal saved! Pew pew!")})
+       :headers {"Content-Type" "application/json"}
+       :body   {:id (:id goal)}})) 
     (catch Exception e (do
                          (prn (str "caught exception: " (.getMessage e)))
                          {:status 500
                           :headers {"Content-Type" "text/html"}
                           :body (str "Goal not saved! Save yourself!")}))))
+
+
+(defn get-goal [{{:keys [id]} :path-params}]
+   (try
+     (do
+       {:status  200
+        :headers {"Content-Type" "application/json"}
+        :body  {:id id}})
+     (catch Exception e (do
+                          (prn (str "caught exception: " (.getMessage e)))
+                          {:status 500
+                           :headers {"Content-Type" "text/html"}
+                           :body (str "Goal not found! Loose yourself!")}))))

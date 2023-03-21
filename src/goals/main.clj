@@ -9,8 +9,7 @@
 
 (defn -main
   [& args]
-  ;; jdbc:postgresql://<host>:5432/<db_name>
-  (let [connection-url (System/getenv "DB_JDBC_URI")]
+  (let [connection-url (or (System/getenv "DB_JDBC_URI") "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals")]
    (migrate/migrate connection-url )
    (jetty/run-jetty (handler/server (jdbc/get-datasource {:jdbcUrl connection-url}))
                     {:host   "0.0.0.0"

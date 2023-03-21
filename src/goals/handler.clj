@@ -24,6 +24,7 @@
                                 [:level :int]
                                 [:deadline :string]
                                 [:goal-parents {:optional true} [:vector :string]]]}}]
+   ["/goals/:id" {:get core/get-goal}]
    ["/" {:get (fn [_] {:status  200
                        :headers {"Content-Type" "text/html"}
                        :body  (slurp (io/resource "index.html"))})}]])

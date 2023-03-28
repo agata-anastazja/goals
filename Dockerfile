@@ -1,6 +1,6 @@
-FROM eclipse-temurin:19-alpine
+FROM eclipse-temurin:20-alpine
 
-RUN cp target/*-SNAPSHOT.jar /app.jar
+COPY  target/*-SNAPSHOT.jar /app.jar
 
-CMD ["java", "-jar", "/app.jar", "target/api-0.1.0-SNAPSHOT.jar"]
+CMD ["java", "-jar", "/app.jar"]
 EXPOSE 8080

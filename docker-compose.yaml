@@ -10,12 +10,17 @@ services:
       POSTGRES_DB: goals
       POSTGRES_USER: goals
       POSTGRES_PASSWORD: goals
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+      
   goals-api:
-    image: agatasumowska/goals
+    build: .
     networks:
       - goals-net
     environment:
-      - DB_JDBC_URI=jdbc:sqlite:goals.db
+      - DB_JDBC_URI=jdbc:postgresql://postgres:5432/goals?user=goals&password=goals
     depends_on:
       - postgres
     restart:

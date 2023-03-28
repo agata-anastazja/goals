@@ -1,7 +1,8 @@
 (ns goals.core
     (:require
      [next.jdbc :as jdbc]
-     [next.jdbc.date-time]))
+     [next.jdbc.date-time]
+     [clojure.data.json :as json]))
 
  
 (java.util.TimeZone/setDefault (java.util.TimeZone/getTimeZone "UTC")) 
@@ -43,7 +44,7 @@
       (save-goal goal ds);; takes goal
       {:status  200
        :headers {"Content-Type" "application/json"}
-       :body   {:id (:id goal)}})) 
+       :body  (json/write-str {:id (:id goal)})})) 
     (catch Exception e (do
                          (prn (str "caught exception: " (.getMessage e)))
                          {:status 500

@@ -35,7 +35,19 @@
       (is (some (fn [row] (= (:id row) goal-id)) rows))
 
       (jdbc/execute-one! ds ["delete from goals where id = ?" goal-id])))
-  (testing "getting a monthly goal with a yearly parent" 
+  (testing "getting a weekly goal" 
+   (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
+         ds (jdbc/get-datasource {:jdbcUrl uri})
+
+         result (core/add-goal {:parameters
+                                {:body {:description "Have fun doing serious side projects"
+                                        :level 1
+                                        :deadline "2023-01-01"}}
+                                :ds ds})
+         rows (jdbc/execute! ds ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})
+         last-inserted-row (last rows)]
+     (is (= (:body result) {:id (:id last-inserted-row)}))))
+  (testing "getting all goals" 
    (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
          ds (jdbc/get-datasource {:jdbcUrl uri})
 

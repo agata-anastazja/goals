@@ -1,10 +1,11 @@
 (ns goals.integration-test
-  (:require 
-    [goals.core :as core]
-    [goals.migrate :as migrate]
-    [clojure.test :refer :all]
-    [next.jdbc :as jdbc]
-    [next.jdbc.result-set :as rs]))
+  (:require
+   [goals.core :as core]
+   [goals.migrate :as migrate]
+   [clojure.test :refer :all]
+   [next.jdbc :as jdbc]
+   [next.jdbc.result-set :as rs]
+   [clojure.data.json :as json]))
 
 (deftest test-app
   (testing "adding a yearly goal"
@@ -46,7 +47,7 @@
                                 :ds ds})
          rows (jdbc/execute! ds ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})
          last-inserted-row (last rows)]
-     (is (= (:body result) {:id (:id last-inserted-row)}))))
+     (is (= (:body result)  (json/write-str  {:id (:id last-inserted-row)})))))
   (testing "getting all goals" 
    (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
          ds (jdbc/get-datasource {:jdbcUrl uri})
@@ -58,7 +59,7 @@
                                 :ds ds})
          rows (jdbc/execute! ds ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})
          last-inserted-row (last rows)]
-     (is (= (:body result) {:id (:id last-inserted-row)})))))
+     (is (= (:body result) (json/write-str {:id (:id last-inserted-row)}))))))
 
 
 (comment

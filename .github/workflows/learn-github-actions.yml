@@ -9,18 +9,19 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin' # See 'Supported distributions' for available options
-          java-version: '19'
+          java-version: '20'
       - name: Install clojure tools
-        uses: DeLaGuardo/setup-clojure@10.1
+        uses: DeLaGuardo/setup-clojure@master
         with:
           # Install just one or all simultaneously
           # The value must indicate a particular version of the tool, or use 'latest'
           # to always provision the latest version
-          cli: latest
-      # - name: Run tests
-      #   run: clojure -T:build test
+          cli: latest 
+          bb: latest
+      - name: Run tests
+        run: bb test
       - name: Build a jar
-        run: clojure -T:build ci
+        run: bb jar
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:

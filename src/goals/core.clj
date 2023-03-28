@@ -35,16 +35,15 @@
 
 (defn add-goal [req] 
   (try
-    (do
-      (let [goal (parse-goal (->
-                              req
-                              :parameters
-                              :body )) 
-            ds (:ds req)]
+    (let [goal (parse-goal (->
+                            req
+                            :parameters
+                            :body))
+          ds (:ds req)]
       (save-goal goal ds);; takes goal
       {:status  200
        :headers {"Content-Type" "application/json"}
-       :body  (json/write-str {:id (:id goal)})})) 
+       :body  (json/write-str {:id (:id goal)})})
     (catch Exception e (do
                          (prn (str "caught exception: " (.getMessage e)))
                          {:status 500

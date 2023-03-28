@@ -1,0 +1,6 @@
+{:tasks {test (do 
+                (shell "docker run -d --name db -p 5432:5432 -e POSTGRES_DB=goals -e POSTGRES_USER=goals -e POSTGRES_PASSWORD=goals postgres:alpine")
+                (try
+                  (clojure "-T:build" "test")
+                  (finally (shell "docker rm -f db"))))
+         jar (clojure "-T:build" "ci")}}

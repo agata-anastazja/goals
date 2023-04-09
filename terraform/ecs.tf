@@ -7,15 +7,15 @@ resource "aws_ecs_task_definition" "service" {
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
   network_mode       = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                   = 512
-  memory                = 1024
+  cpu                   = 1024
+  memory                = 2048
   
   container_definitions = jsonencode([
     {
       name      = "goals-app"
       image     = "agatasumowska/goals"
-      cpu       = 512
-      memory    = 1024
+      cpu       = 1024
+      memory    = 2048
       essential = true
       environment = [{"name": "DB_JDBC_URI", "value": "jdbc:postgresql://${aws_db_instance.goals.endpoint}/goals?user=goals&password=goalsgoals" }]
       portMappings = [

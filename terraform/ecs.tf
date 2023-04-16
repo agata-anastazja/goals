@@ -17,6 +17,7 @@ resource "aws_ecs_task_definition" "service" {
       cpu       = 1024
       memory    = 2048
       essential = true
+      environment = [{"name": "DB_JDBC_URI", "value": "jdbc:postgresql://${aws_db_instance.goals.endpoint}/goals?user=goals&password=goalsgoals" }]
       portMappings = [
         {
           containerPort = 80

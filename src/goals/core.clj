@@ -13,7 +13,7 @@
 
 (defn save-goal [{:keys [id created-at last-updated  description level goal-parent deadline active]}
                   ds]
-    #_(jdbc/execute-one! ds ["INSERT INTO goals(id, created_at, last_updated, goal, goal_level, goal_parent, deadline, active)
+    (jdbc/execute-one! ds ["INSERT INTO goals(id, created_at, last_updated, goal, goal_level, goal_parent, deadline, active)
   values(?, ?, ?, ?, ?, ?, ?, ?)"
                            id created-at last-updated  description level goal-parent deadline active])
   (println "parameters to save " ds id created-at last-updated  description level goal-parent deadline active))

@@ -13,10 +13,11 @@
 
 (defn save-goal [{:keys [id created-at last-updated  description level goal-parent deadline active]}
                   ds]
-    (jdbc/execute-one! ds ["INSERT INTO goals(id, created_at, last_updated, goal, goal_level, goal_parent, deadline, active)
+    #_(jdbc/execute-one! ds ["INSERT INTO goals(id, created_at, last_updated, goal, goal_level, goal_parent, deadline, active)
   values(?, ?, ?, ?, ?, ?, ?, ?)"
-                           id created-at last-updated  description level goal-parent deadline active]))
-
+                           id created-at last-updated  description level goal-parent deadline active])
+  (println "parameters to save " ds id created-at last-updated  description level goal-parent deadline active))
+ 
 (defn parse-goal 
   ([req] (let [id  (random-uuid)
                created-at (now)]

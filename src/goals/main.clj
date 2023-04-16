@@ -13,7 +13,7 @@
     #_(migrate/migrate connection-url)
     (jetty/run-jetty (handler/server (jdbc/get-datasource {:jdbcUrl connection-url}))
                      {:host   "0.0.0.0"
-                      :port   8080
+                      :port   80
                       :join?  false
                       :async? true})))
 

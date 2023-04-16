@@ -48,7 +48,7 @@
                                        (system-interceptor ds)]}})
    (ring/routes
     (ring/create-default-handler
-     {:not-found (constantly {:status  404
+     {:not-found (constantly {:status  200
                               :headers {"Content-Type" "application/json"}
                               :body    "{\"message\": \"Took a wrong turn?\"}"})}))
    {:executor sieppari/executor}))

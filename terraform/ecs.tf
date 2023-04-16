@@ -17,11 +17,10 @@ resource "aws_ecs_task_definition" "service" {
       cpu       = 1024
       memory    = 2048
       essential = true
-      environment = [{"name": "DB_JDBC_URI", "value": "jdbc:postgresql://${aws_db_instance.goals.endpoint}/goals?user=goals&password=goalsgoals" }]
       portMappings = [
         {
-          containerPort = 8080
-          hostPort      = 8080
+          containerPort = 80
+          hostPort      = 80
         }
       ]
     }]
@@ -44,7 +43,7 @@ resource "aws_ecs_service" "worker" {
   load_balancer {
     target_group_arn = aws_alb_target_group.goals_app.id
     container_name   = "goals-app"
-    container_port   = "8080"
+    container_port   = "80"
   }
 
   depends_on = [

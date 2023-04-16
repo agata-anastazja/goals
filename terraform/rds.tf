@@ -4,6 +4,7 @@ resource "aws_db_instance" "goals" {
   allocated_storage      = 5
   engine                 = "postgres"
   engine_version         = "14.6"
+  db_name                = "goals"
   username               = "goals"
   password               = "goalsgoals"
   db_subnet_group_name   = aws_db_subnet_group.goals.name

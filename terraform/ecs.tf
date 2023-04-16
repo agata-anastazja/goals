@@ -17,7 +17,15 @@ resource "aws_ecs_task_definition" "service" {
       cpu       = 1024
       memory    = 2048
       essential = true
-      environment = [{"name": "DB_JDBC_URI", "value": "jdbc:postgresql://${aws_db_instance.goals.endpoint}:5432/goals?user=goals&password=goalsgoals" }]
+      environment = [{"name": "DB_JDBC_URI", "value": "jdbc:postgresql://${aws_db_instance.goals.endpoint}/goals?user=goals&password=goalsgoals" }]
+      logConfiguration = {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": aws_cloudwatch_log_group.goals_log_group.name,
+          "awslogs-region": "eu-west-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
       portMappings = [
         {
           containerPort = 80

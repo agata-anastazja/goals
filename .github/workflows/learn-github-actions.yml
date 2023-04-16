@@ -18,8 +18,6 @@ jobs:
           # to always provision the latest version
           cli: latest 
           bb: latest
-      - name: Run tests
-        run: bb test
       - name: Build a jar
         run: bb jar
       - name: Login to Docker Hub

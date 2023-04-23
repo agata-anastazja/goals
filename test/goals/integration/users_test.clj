@@ -18,4 +18,13 @@
           last-inserted-row (dissoc (last rows) :id)]
       (is (= (:status result)  200))
       (is (= last-inserted-row  {:username "Rahul"
-                                          :password "Secretpassword"})))))
+                                          :password "Secretpassword"}))))
+  (testing "only creates users with unique usernames"
+    (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
+          ds (jdbc/get-datasource {:jdbcUrl uri})
+          result (users/add {:parameters
+                                  {:body {:username "Rahul"
+                                          :password "Secretpassword"}}
+                                  :ds ds})
+         ]
+      (is (= (:status result)  409)))))

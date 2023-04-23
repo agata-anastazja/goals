@@ -2,8 +2,7 @@
     (:require
      [next.jdbc :as jdbc]
      [next.jdbc.date-time]
-     [clojure.data.json :as json]
-     [clojure.string :as str]))
+     [clojure.data.json :as json]))
 
  
 (java.util.TimeZone/setDefault (java.util.TimeZone/getTimeZone "UTC")) 

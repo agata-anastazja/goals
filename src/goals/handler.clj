@@ -1,6 +1,7 @@
 (ns goals.handler
   (:require
    [goals.goals :as goals]
+   [goals.users :as users] 
    [muuntaja.core :as m]
    [reitit.ring :as ring]
    [reitit.http :as http]
@@ -17,12 +18,17 @@
   {:enter #(assoc-in % [:request :ds] ds)})
 
 (def routes
-  [["/add" {:post goals/add-goal
-            :parameters {:body [:map {:closed false}
-                                [:description :string]
-                                [:level :int]
-                                [:deadline :string]
-                                [:goal-parents {:optional true} [:vector :string]]]}}]
+  [["/users"
+    {:post users/add 
+     :parameters {:body [:map {:closed false}
+                         [:username :string]
+                         [:password :string]]}}]
+   ["/goals" {:post goals/add
+              :parameters {:body [:map {:closed false}
+                                  [:description :string]
+                                  [:level :int]
+                                  [:deadline :string]
+                                  [:goal-parents {:optional true} [:vector :string]]]}}]
    ["/goals/:id" {:get goals/get-goal}]])
 
 (defn server

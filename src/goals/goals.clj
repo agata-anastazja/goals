@@ -34,7 +34,7 @@
       :last-updated created-at
       :active true})))
 
-(defn add-goal [req] 
+(defn add [req] 
   (try
     (let [goal (parse-goal (->
                             req

@@ -40,7 +40,7 @@
    (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
          ds (jdbc/get-datasource {:jdbcUrl uri})
 
-         result (core/add-goal {:parameters
+         result (core/add {:parameters
                                 {:body {:description "Have fun doing serious side projects"
                                         :level 1
                                         :deadline "2023-01-01"}}
@@ -52,7 +52,7 @@
    (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
          ds (jdbc/get-datasource {:jdbcUrl uri})
 
-         result (core/add-goal {:parameters
+         result (core/add {:parameters
                                 {:body {:description "Have fun doing serious side projects"
                                         :level 1
                                         :deadline "2023-01-01"}}

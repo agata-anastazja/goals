@@ -1,7 +1,6 @@
-(ns goals.core-test
+(ns goals.unit.goals-test
   (:require [clojure.test :refer :all]
-            [goals.core :as core]))
-
+            [goals.goals :as core]))
 ;; TODO: determine the right way to test this
 ;;  :deadline deadline date from string
 ;;  :created-at created-at now date

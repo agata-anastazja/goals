@@ -1,0 +1,14 @@
+{:up   ["CREATE TABLE IF NOT EXISTS goals (
+    goal TEXT NOT NULL,
+    goal_level TEXT NOT NULL,
+    id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    created_at timestamp,
+    last_updated timestamp,
+    deadline timestamp,
+    goal_parent UUID,
+    completion_percent int,
+    completion_comments TEXT,
+    active BOOLEAN,
+    date_completed timestamp);"]
+ :down ["DROP TABLE goals;"]}

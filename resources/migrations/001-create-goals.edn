@@ -1,5 +1,0 @@
-{:up   ["CREATE TABLE IF NOT EXISTS goals (
-    goal TEXT NOT NULL,
-    goal_level TEXT NOT NULL
-);"]
- :down ["DROP TABLE goals;"]}

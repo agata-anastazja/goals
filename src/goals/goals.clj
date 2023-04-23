@@ -1,8 +1,9 @@
-(ns goals.core
+(ns goals.goals
     (:require
      [next.jdbc :as jdbc]
      [next.jdbc.date-time]
-     [clojure.data.json :as json]))
+     [clojure.data.json :as json]
+     [clojure.string :as str]))
 
  
 (java.util.TimeZone/setDefault (java.util.TimeZone/getTimeZone "UTC")) 
@@ -12,11 +13,10 @@
 (def df (java.text.SimpleDateFormat. "yyyy-MM-dd"))
 
 (defn save-goal [{:keys [id created-at last-updated  description level goal-parent deadline active]}
-                  ds]
-    (jdbc/execute-one! ds ["INSERT INTO goals(id, created_at, last_updated, goal, goal_level, goal_parent, deadline, active)
+                 ds]
+  (jdbc/execute-one! ds ["INSERT INTO goals(id, created_at, last_updated, goal, goal_level, goal_parent, deadline, active)
   values(?, ?, ?, ?, ?, ?, ?, ?)"
-                           id created-at last-updated  description level goal-parent deadline active])
-  (println "parameters to save " ds id created-at last-updated  description level goal-parent deadline active))
+                         id created-at last-updated  description level goal-parent deadline active]))
  
 (defn parse-goal 
   ([req] (let [id  (random-uuid)
@@ -54,10 +54,9 @@
 
 (defn get-goal [{{:keys [id]} :path-params}]
    (try
-     (do
        {:status  200
         :headers {"Content-Type" "application/json"}
-        :body  {:id id}})
+        :body  {:id id}}
      (catch Exception e (do
                           (prn (str "caught exception: " (.getMessage e)))
                           {:status 500

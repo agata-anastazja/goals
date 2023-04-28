@@ -4,8 +4,6 @@ services:
     image: docker.io/library/postgres:alpine
     networks:
       - goals-net
-    volumes:
-      - pgdata:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: goals
       POSTGRES_USER: goals
@@ -33,5 +31,3 @@ services:
 networks:
   goals-net:
 
-volumes:
-  pgdata:

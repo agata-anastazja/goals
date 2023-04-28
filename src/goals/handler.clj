@@ -17,6 +17,11 @@
   [ds]
   {:enter #(assoc-in % [:request :ds] ds)})
 
+(def auth-interceptor
+  {:enter (fn [{{{:strs [authorization]} :headers} :request :as req}]
+            (println authorization)
+            req)})
+
 (def routes
   [["/users"
     {:post users/add 
@@ -24,12 +29,14 @@
                          [:username :string]
                          [:password :string]]}}]
    ["/goals" {:post goals/add
+              :interceptors [auth-interceptor]
               :parameters {:body [:map {:closed false}
                                   [:description :string]
                                   [:level :int]
                                   [:deadline :string]
                                   [:goal-parents {:optional true} [:vector :string]]]}}]
-   ["/goals/:id" {:get goals/get-goal}]])
+   ["/goals/:id" {:get goals/get-goal
+                  :interceptors [auth-interceptor]}]])
 
 (defn server
   [ds]

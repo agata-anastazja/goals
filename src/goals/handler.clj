@@ -2,6 +2,7 @@
   (:require
    [goals.goals :as goals]
    [goals.users :as users] 
+   [goals.auth :as auth]
    [muuntaja.core :as m]
    [reitit.ring :as ring]
    [reitit.http :as http]
@@ -10,7 +11,8 @@
    [reitit.http.interceptors.parameters :as parameters]
    [reitit.http.interceptors.muuntaja :as muuntaja]
    [reitit.http.interceptors.exception :as exception]
-   [reitit.interceptor.sieppari :as sieppari]))
+   [reitit.interceptor.sieppari :as sieppari]
+   [sieppari.context :as sie-context]))
 
 
 (defn system-interceptor
@@ -18,16 +20,24 @@
   {:enter #(assoc-in % [:request :ds] ds)})
 
 (def auth-interceptor
-  {:enter (fn [{{{:strs [authorization]} :headers} :request :as req}]
-            (println authorization)
-            req)})
+  {:enter (fn [{{{:strs [authorization]} :headers
+                 ds :ds} :request :as ctx}]
+            (if-not (auth/authorised? ds authorization)
+              (sie-context/terminate
+               ctx
+               {:status 401
+                :body {:message "Not authorised"}
+                :content-type "application/json"})
+              ctx))})
 
 (def routes
   [["/users"
-    {:post users/add 
-     :parameters {:body [:map {:closed false}
-                         [:username :string]
-                         [:password :string]]}}]
+    {:post {:handler users/add
+            :parameters {:body [:map {:closed false}
+                                [:username :string]
+                                [:password :string]]}}
+     :get {:handler users/list-users}}] 
+
    ["/goals" {:post goals/add
               :interceptors [auth-interceptor]
               :parameters {:body [:map {:closed false}

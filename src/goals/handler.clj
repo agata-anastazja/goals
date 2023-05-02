@@ -35,8 +35,7 @@
     {:post {:handler users/add
             :parameters {:body [:map {:closed false}
                                 [:username :string]
-                                [:password :string]]}}
-     :get {:handler users/list-users}}] 
+                                [:password :string]]}}}] 
 
    ["/goals" {:post goals/add
               :interceptors [auth-interceptor]

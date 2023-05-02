@@ -78,3 +78,11 @@ _Feel free to remove or change the `LICENSE` file and remove or update this_
 _section of the `README.md` file!_
 
 Distributed under the Eclipse Public License version 1.0.
+
+Completed:
+Authentication
+
+Next steps:
+Authorisation - change the include request to user_id so that a goal can be saved for the user that is authenticated
+Retrieve goals for user
+update a specific goal / how to?

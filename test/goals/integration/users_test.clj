@@ -25,6 +25,5 @@
           result (users/add {:parameters
                                   {:body {:username "Rahul"
                                           :password "Secretpassword"}}
-                                  :ds ds})
-         ]
+                                  :ds ds})]
       (is (= (:status result)  409)))))

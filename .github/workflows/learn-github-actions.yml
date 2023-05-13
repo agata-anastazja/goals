@@ -1,5 +1,5 @@
 name: learn-github-actions
-run-name: ${{ github.actor }} is learning GitHub Actions
+run-name: Build an image and push to docker
 on: [push]
 jobs:
   build-jar:

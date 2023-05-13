@@ -1,8 +1,7 @@
 (ns goals.users
   (:require
    [next.jdbc :as jdbc]
-   [clojure.string :as str] 
-   [next.jdbc.result-set :as rs]))
+   [clojure.string :as str]))
 
 (defn save [{:keys [username password]} ds]
   (let [id (random-uuid)]

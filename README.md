@@ -1,6 +1,8 @@
 # api
 
-FIXME: my new application.
+This application is an accountability app meant for keeping track of yearly, monthly and weekly goals.
+Goals can be set by a user or their accountability buddy. Based on a process I have with my accountability
+buddy.
 
 ## Installation
 
@@ -40,6 +42,15 @@ Run that uberjar:
 
 If you remove `version` from `build.clj`, the uberjar will become `target/api-standalone.jar`.
 
+## Current state
+1. an authenticated user can add and complete goals for themselves
+    - done:
+        adding goals
+        authentication
+    - todo:
+        completing goals
+
+Link to the board with the rest of the plan https://miro.com/app/board/uXjVP0G5xQU=/?share_link_id=472777659691
 
 ## License
 

@@ -51,8 +51,8 @@
                           :body (str "Goal not saved! Save yourself!")}))))
 
 (defn completion-update [id current-time ds]
-  (jdbc/execute-one! ds ["UPDATE goals SET active=false WHERE id = ?"
-                         id]))
+  (jdbc/execute-one! ds ["UPDATE goals SET active=false, last_updated= ?, date_completed= ?  WHERE id = ?"
+                          current-time current-time id]))
 
 (defn complete [req]
   (try

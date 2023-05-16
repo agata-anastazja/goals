@@ -22,11 +22,7 @@
       (is (some (fn [row] (= (:id row) goal-id)) rows))
 
       (jdbc/execute-one! ds ["delete from goals where id = ?" goal-id])))
-    
-    ; id UUID PRIMARY KEY,
-    ; last_updated timestamp,
-    ; active BOOLEAN,
-    ; date_completed timestamp)
+ 
   (testing "completing a goal" 
     (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
           ds (jdbc/get-datasource {:jdbcUrl uri})

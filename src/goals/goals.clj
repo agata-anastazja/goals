@@ -1,15 +1,9 @@
 (ns goals.goals
     (:require
+     [goals.parser :as parser]
      [next.jdbc :as jdbc]
      [next.jdbc.date-time]
      [clojure.data.json :as json]))
-
- 
-(java.util.TimeZone/setDefault (java.util.TimeZone/getTimeZone "UTC")) 
-(defn now [] (new java.util.Date))
-;; clojure.java.time
-
-(def df (java.text.SimpleDateFormat. "yyyy-MM-dd"))
 
 (defn save-goal [{:keys [id created-at last-updated  description level goal-parent deadline active]}
                  ds]
@@ -17,25 +11,11 @@
   values(?, ?, ?, ?, ?, ?, ?, ?)"
                          id created-at last-updated  description level goal-parent deadline active]))
  
-(defn parse-goal 
-  ([req] (let [id  (random-uuid)
-               created-at (now)]
-          (parse-goal req id created-at)))
-  ([req id created-at]
-   (let [{:keys [description level deadline goal-parent]} req
-         deadline (.parse df deadline)]
-     {:id id
-      :goal-parent goal-parent
-      :description description
-      :level level
-      :deadline deadline
-      :created-at created-at
-      :last-updated created-at
-      :active true})))
+
 
 (defn add [req] 
   (try
-    (let [goal (parse-goal (->
+    (let [goal (parser/parse (->
                             req
                             :parameters
                             :body))
@@ -62,7 +42,7 @@
                :body
                :id)
           ds (:ds req)
-          current-time (now)]
+          current-time (parser/now)]
       (completion-update id current-time ds)
       {:status  200
        :headers {"Content-Type" "application/json"}

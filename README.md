@@ -47,8 +47,9 @@ If you remove `version` from `build.clj`, the uberjar will become `target/api-st
     - done:
         adding goals
         authentication
-    - todo:
         completing goals
+    - todo:
+        based on a level the deadline is created
 
 Link to the board with the rest of the plan https://miro.com/app/board/uXjVP0G5xQU=/?share_link_id=472777659691
 

@@ -41,7 +41,6 @@
               :parameters {:body [:map {:closed false}
                                   [:description :string]
                                   [:level :int]
-                                  [:deadline :string]
                                   [:goal-parents {:optional true} [:vector :string]]]}}]
    ["/goals/:id" {:get goals/get-goal
                   :interceptors [auth-interceptor]}]])

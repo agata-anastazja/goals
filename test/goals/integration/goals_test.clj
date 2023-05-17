@@ -5,14 +5,15 @@
    [clojure.test :refer :all]
    [next.jdbc :as jdbc]
    [next.jdbc.result-set :as rs]
-   [clojure.data.json :as json]))
+   [clojure.data.json :as json]
+   [goals.parser :as parser]))
 
 (deftest test-app
   (testing "adding a yearly goal"
     (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
           _ (migrate/migrate uri)
           ds (jdbc/get-datasource {:jdbcUrl uri})
-          parsed-goal (goals/parse-goal {:description "Have fun doing serious side projects"
+          parsed-goal (parser/parse {:description "Have fun doing serious side projects"
                                          :level 1
                                          :deadline "2023-01-01"})
           goal-id (:id parsed-goal)

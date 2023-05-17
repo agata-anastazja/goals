@@ -20,7 +20,7 @@
                             :parameters
                             :body))
           ds (:ds req)]
-      (save-goal goal ds);; takes goal
+      (save-goal goal ds)
       {:status  200
        :headers {"Content-Type" "application/json"}
        :body  (json/write-str {:id (:id goal)})})

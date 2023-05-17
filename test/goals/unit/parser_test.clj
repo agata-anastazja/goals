@@ -24,6 +24,13 @@
 (deftest calculate-deadline-test
   (testing "level 1 goal has a deadline a week from when it was set"
     (let [current-time (jt/zoned-date-time 2023 1 1)
-
           expected-result (jt/zoned-date-time 2023 1 8)]
-      (is (= (parser/calculate-deadline current-time 1) expected-result)))))
+      (is (= (parser/calculate-deadline current-time 1) expected-result))))
+  (testing "level 2 goal has a deadline a month from when it was set"
+    (let [current-time (jt/zoned-date-time 2023 1 1)
+          expected-result (jt/zoned-date-time 2023 2 1)]
+      (is (= (parser/calculate-deadline current-time 2) expected-result))))
+  (testing "level 2 goal has a deadline a month from when it was set"
+    (let [current-time (jt/zoned-date-time 2023 1 1)
+          expected-result (jt/zoned-date-time 2024 1 1)]
+      (is (= (parser/calculate-deadline current-time 3) expected-result)))))

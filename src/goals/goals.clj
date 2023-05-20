@@ -2,7 +2,6 @@
     (:require
      [goals.parser :as parser]
      [next.jdbc :as jdbc]
-     [next.jdbc.date-time]
      [clojure.data.json :as json]))
 
 (defn save-goal [{:keys [id created-at last-updated  description level goal-parent deadline active]}

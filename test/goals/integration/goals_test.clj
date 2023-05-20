@@ -5,7 +5,6 @@
    [clojure.test :refer :all]
    [next.jdbc :as jdbc]
    [next.jdbc.result-set :as rs]
-   [clojure.data.json :as json]
    [goals.parser :as parser]))
 
 (deftest test-app
@@ -14,8 +13,7 @@
           _ (migrate/migrate uri)
           ds (jdbc/get-datasource {:jdbcUrl uri})
           parsed-goal (parser/parse {:description "Have fun doing serious side projects"
-                                         :level 1
-                                         :deadline "2023-01-01"})
+                                     :level 1})
           goal-id (:id parsed-goal)
           _ (goals/save-goal parsed-goal
                              ds)
@@ -30,8 +28,7 @@
 
           _ (goals/add {:parameters
                         {:body {:description "Have fun doing serious side projects"
-                                :level 1
-                                :deadline "2023-01-01"}}
+                                :level 1}}
                         :ds ds})
           rows (jdbc/execute! ds ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})
           last-inserted-row (last rows)

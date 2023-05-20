@@ -1,9 +1,9 @@
 (ns goals.parser
-  (:require [java-time.api :as jt]))
+  (:require
+   [next.jdbc.date-time]
+   [java-time.api :as jt]))
 
-(java.util.TimeZone/setDefault (java.util.TimeZone/getTimeZone "UTC"))
-
-(defn now [] (jt/zoned-date-time))
+(defn now [] (jt/instant))
 
 (defn calculate-deadline [time level]
   (condp = level

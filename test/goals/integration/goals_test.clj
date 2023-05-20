@@ -8,7 +8,7 @@
    [goals.parser :as parser]))
 
 (deftest test-app
-  (testing "adding a yearly goal"
+  (testing "adding a weekly goal"
     (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
           _ (migrate/migrate uri)
           ds (jdbc/get-datasource {:jdbcUrl uri})
@@ -22,6 +22,26 @@
 
       (jdbc/execute-one! ds ["delete from goals where id = ?" goal-id])))
  
+   (testing "adding a monthly goal that is an extension of a yearly goal"
+     (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
+           ds (jdbc/get-datasource {:jdbcUrl uri})
+           parent-goal (parser/parse {:description "Have fun doing serious side projects"
+                                      :level 3})
+           parent-goal-id (:id parent-goal)
+           _ (goals/save-goal parent-goal
+                              ds)
+           goal (parser/parse {:description "Have fun doing serious side projects"
+                               :level 2
+                               :goal-parent parent-goal-id}) 
+           goal-id (:id goal)
+
+           _ (goals/save-goal goal
+                              ds)
+           rows (jdbc/execute! ds ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})]
+       (is (some (fn [row] (= (:id row) goal-id)) rows))
+
+       (jdbc/execute-one! ds ["delete from goals where id = ?" goal-id])))
+
   (testing "completing a goal" 
     (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
           ds (jdbc/get-datasource {:jdbcUrl uri})

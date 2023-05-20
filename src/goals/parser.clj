@@ -8,8 +8,8 @@
 (defn calculate-deadline [time level]
   (condp = level
     1 (jt/plus time (jt/days 7))
-    2 (jt/plus time (jt/months 1))
-    3 (jt/plus time (jt/years 1))))
+    2 (jt/plus time (jt/days 31))
+    3 (jt/plus time (jt/days 364))))
 
 (defn parse
   ([req] (let [id  (random-uuid)

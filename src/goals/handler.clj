@@ -41,7 +41,7 @@
               :parameters {:body [:map {:closed false}
                                   [:description :string]
                                   [:level :int]
-                                  [:goal-parents {:optional true} [:vector :string]]]}}]
+                                  [:goal-parent {:optional true} :string]]}}]
    ["/goals/:id" {:get goals/get-goal
                   :interceptors [auth-interceptor]}]])
 

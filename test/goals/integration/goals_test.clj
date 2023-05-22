@@ -58,6 +58,21 @@
                              :ds ds})
           rows (jdbc/execute! ds ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})
           completed (first (filterv (fn [row] (= (:id row) id)) rows))]
-      (is (= (:active completed) false)))))
+      (is (= (:active completed) false))))
+  
+  (testing "getting a goal"
+    (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
+          ds (jdbc/get-datasource {:jdbcUrl uri})
+          req {:parameters
+               {:body {:description "have fun this week"
+                       :level 1}}
+               :ds ds}
+          _ (goals/add req)
+          rows (jdbc/execute! ds ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})
+          last-inserted-row (last rows)
+          id (:id last-inserted-row)
+          result (goals/get-goal {:path-params {:id id}
+                                  :ds ds})]
+      (is (= (-> result :body :goal) (-> req :parameters :body :description))))))
 
 

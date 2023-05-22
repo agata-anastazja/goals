@@ -7,10 +7,13 @@ buddy.
 ## Installation
 
 Requirements:
+
 clojure
-For testing
+
 docker 
+
 babashka
+
     $ bash < <(curl -s https://raw.githubusercontent.com/babashka/babashka/master/install)
 
 ## Usage
@@ -19,7 +22,6 @@ babashka
 Run the project directly, via `:main-opts` (`-m goals.api`):
 
     $ clojure -M:run-m
-    Hello, World!
 
 Integration tests require a test db. To run them run:
     bb test

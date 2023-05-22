@@ -2,7 +2,9 @@
     (:require
      [goals.parser :as parser]
      [next.jdbc :as jdbc]
-     [clojure.data.json :as json]))
+     [next.jdbc.result-set :as rs] 
+     [clojure.data.json :as json]
+     [goals.migrate :as migrate]))
 
 (defn save-goal [{:keys [id created-at last-updated  description level goal-parent deadline active]}
                  ds]
@@ -52,14 +54,44 @@
                           :headers {"Content-Type" "text/html"}
                           :body (str "Goal not completed! Complete yourself!")}))))
 
+(defn tap [x]
+  (do
+   
+   (println "tap " x)
+   x))
 
-(defn get-goal [{{:keys [id]} :path-params}]
+(defn get-goal-from-db [id ds]
+  (-> (jdbc/execute! ds ["SELECT * FROM goals where id=?"id] {:builder-fn rs/as-unqualified-lower-maps})
+      first))
+
+(defn get-goal [req]
    (try
-       {:status  200
-        :headers {"Content-Type" "application/json"}
-        :body  {:id id}}
+     (let [{{:keys [id]} :path-params} req
+           ds (:ds req)
+           goal (get-goal-from-db id ds)]
+      {:status  200
+       :headers {"Content-Type" "application/json"}
+       :body  goal})
      (catch Exception e (do
                           (prn (str "caught exception: " (.getMessage e)))
                           {:status 500
                            :headers {"Content-Type" "text/html"}
                            :body (str "Goal not found! Loose yourself!")}))))
+
+(comment
+  (def uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals")
+  (def ds (jdbc/get-datasource {:jdbcUrl uri}))
+  (def    req {:parameters
+               {:body {:description "have fun this week"
+                       :level 1}}
+               :ds ds})
+  (migrate/migrate uri)
+  (def one (add req)) 
+  (def uuid (parse-uuid "2822fbca-04a6-4730-9c71-25a68343219c"))
+  (def goal (get-goal-from-db uuid ds))
+  goal
+  (:goal goal)
+  (first goal) 
+
+  (.typeOf goal)
+  )

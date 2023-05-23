@@ -18,7 +18,6 @@
   ([req id created-at]
    (let [{:keys [description level goal-parent]} req
          deadline (calculate-deadline created-at level)]
-     (println "goal parent "req)
      {:id id
       :goal-parent goal-parent
       :description description

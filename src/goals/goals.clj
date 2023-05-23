@@ -17,9 +17,8 @@
        first))
 
 (defn validate-goal [goal ds]
-  (println goal)
   (when-let [goal-parent-id (:goal-parent goal)]
-   (or (get-goal-from-db goal-parent-id ds) (throw (Exception. "my exception message")))))
+   (or (get-goal-from-db goal-parent-id ds) (throw (AssertionError. "Wrong input.")))))
 
 (defn add [req] 
   (try
@@ -33,6 +32,10 @@
       {:status  200
        :headers {"Content-Type" "application/json"}
        :body  (json/write-str {:id (:id goal)})})
+    (catch AssertionError e
+      {:status 400
+       :headers {"Content-Type" "text/html"}
+       :body (str "Goal not saved! Save yourself! Invalid request")})
     (catch Exception e (do
                          (prn (str "caught exception: " (.getMessage e)))
                          {:status 500

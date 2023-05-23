@@ -12,7 +12,14 @@
   values(?, ?, ?, ?, ?, ?, ?, ?)"
                          id created-at last-updated  description level goal-parent deadline active]))
  
+(defn get-goal-from-db [id ds]
+   (-> (jdbc/execute! ds ["SELECT * FROM goals where id=?" id] {:builder-fn rs/as-unqualified-lower-maps})
+       first))
 
+(defn validate-goal [goal ds]
+  (println goal)
+  (when-let [goal-parent-id (:goal-parent goal)]
+   (or (get-goal-from-db goal-parent-id ds) (throw (Exception. "my exception message")))))
 
 (defn add [req] 
   (try
@@ -21,6 +28,7 @@
                             :parameters
                             :body))
           ds (:ds req)]
+      (validate-goal goal ds)
       (save-goal goal ds)
       {:status  200
        :headers {"Content-Type" "application/json"}
@@ -54,15 +62,7 @@
                           :headers {"Content-Type" "text/html"}
                           :body (str "Goal not completed! Complete yourself!")}))))
 
-(defn tap [x]
-  (do
-   
-   (println "tap " x)
-   x))
 
-(defn get-goal-from-db [id ds]
-  (-> (jdbc/execute! ds ["SELECT * FROM goals where id=?"id] {:builder-fn rs/as-unqualified-lower-maps})
-      first))
 
 (defn get-goal [req]
    (try

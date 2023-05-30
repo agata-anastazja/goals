@@ -15,7 +15,9 @@
                                    :level 1}}
                :ds ds}
           result (goals/add req)]
-      (is (= (:status result) 200))))
+      (is (= (:status result) 200)))))
+
+(deftest test-goal-handler
   
  (testing "adding a weekly goal with a non exsisting parent returns a 400"
    (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"

@@ -32,25 +32,22 @@
          result (goals/add goal)] 
      (is (= (:status result) 400))))
 
-  ;;  (testing "adding a monthly goal that is an extension of a yearly goal"
-  ;;    (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
-  ;;          ds (jdbc/get-datasource {:jdbcUrl uri})
-  ;;          parent-goal (parser/parse {:description "Have fun doing serious side projects"
-  ;;                                     :level 3})
-  ;;          parent-goal-id (:id parent-goal)
-  ;;          _ (goals/save-goal parent-goal
-  ;;                             ds)
-  ;;          goal (parser/parse {:description "Have fun doing serious side projects"
-  ;;                              :level 2
-  ;;                              :goal-parent parent-goal-id}) 
-  ;;          goal-id (:id goal)
-
-  ;;          _ (goals/save-goal goal
-  ;;                             ds)
-  ;;          rows (jdbc/execute! ds ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})]
-  ;;      (is (some (fn [row] (= (:id row) goal-id)) rows))
-
-  ;;      (jdbc/execute-one! ds ["delete from goals where id = ?" goal-id])))
+   (testing "Given a parent goal exists when we add a goal with a parent goal it saves successfully"
+     (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
+           ds (jdbc/get-datasource {:jdbcUrl uri})
+           parent-req  {:parameters {:body {:description "Have fun doing serious side projects"
+                                            :level 3}}
+                        :ds ds}
+           _ (goals/add parent-req)
+           rows (jdbc/execute! ds ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})
+           last-inserted-row (last rows)
+           parent-goal-id (:id last-inserted-row)
+           req  {:parameters {:body {:description "Have fun doing serious side projects"
+                                     :level 3
+                                     :goal-parent parent-goal-id}}
+                 :ds ds}
+           result (goals/add req)]
+       (is (= (:status result) 200))))
 
   (testing "completing a goal" 
     (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"

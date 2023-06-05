@@ -4,7 +4,8 @@
    [goals.migrate :as migrate]
    [clojure.test :refer :all]
    [next.jdbc :as jdbc]
-   [next.jdbc.result-set :as rs]))
+   [next.jdbc.result-set :as rs]
+   [clojure.data.json :as json]))
 
 (deftest test-app
   (testing "adding a weekly goal"
@@ -38,13 +39,11 @@
            parent-req  {:parameters {:body {:description "Have fun doing serious side projects"
                                             :level 3}}
                         :ds ds}
-           _ (goals/add parent-req)
-           rows (jdbc/execute! ds ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})
-           last-inserted-row (last rows)
-           parent-goal-id (:id last-inserted-row)
+           parent-result (goals/add parent-req)
+           parent-id (-> (json/read-json (:body parent-result)) :id parse-uuid) 
            req  {:parameters {:body {:description "Have fun doing serious side projects"
                                      :level 3
-                                     :goal-parent parent-goal-id}}
+                                     :goal-parent parent-id}}
                  :ds ds}
            result (goals/add req)]
        (is (= (:status result) 200))))

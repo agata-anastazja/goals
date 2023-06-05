@@ -16,7 +16,8 @@
                                    :level 1}}
                :ds ds}
           result (goals/add req)]
-      (is (= (:status result) 200)))))
+      (is (= (:status result) 200))
+      (is (uuid? (-> (json/read-json (:body result)) :id parse-uuid))))))
 
 (deftest test-goal-handler
   

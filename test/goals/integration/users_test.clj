@@ -8,10 +8,9 @@
 
 (deftest test-app
   (testing "create a user"
-    ;; explicitly open connection so that I can close it
     (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
           _ (migrate/migrate uri)
-          ds (jdbc/get-datasource {:jdbcUrl uri :auto-commit false})]
+          ds (jdbc/get-datasource {:jdbcUrl uri})]
 
       (with-open [conn (jdbc/get-connection ds {:auto-commit false})]
         (let [result (users/add {:parameters
@@ -22,13 +21,18 @@
               last-inserted-row (dissoc (last rows) :id)]
           (is (=  200 (:status result)))
           (is (= last-inserted-row  {:username "Rahul"
-                                     :password "Secretpassword"})))
-        )))
-   #_(testing "only creates users with unique usernames"
+                                     :password "Secretpassword"}))))))
+  (testing "only creates users with unique usernames"
     (let [uri "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals"
-          ds (jdbc/get-datasource {:jdbcUrl uri :auto-commit false})
-          result (users/add {:parameters
-                                  {:body {:username "Rahul"
-                                          :password "Secretpassword"}}
-                                  :ds ds})]
-      (is (= (:status result)  409)))))
+          _ (migrate/migrate uri)
+          ds (jdbc/get-datasource {:jdbcUrl uri})]
+      (with-open [conn (jdbc/get-connection ds {:auto-commit false})]
+        (let [_ (users/add {:parameters
+                            {:body {:username "Rahul"
+                                    :password "Secretpassword"}}
+                            :ds conn})
+              result (users/add {:parameters
+                                 {:body {:username "Rahul"
+                                         :password "Secretpassword"}}
+                                 :ds conn})]
+          (is (= (:status result)  409)))))))

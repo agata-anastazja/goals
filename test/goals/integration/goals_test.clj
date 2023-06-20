@@ -75,3 +75,15 @@
         (is (= (-> result :body :goal) (-> req :parameters :body :description)))))))
 
 
+(deftest test-get-all-goals
+  (testing "get all goals returns 2 created goals"
+    (with-open [conn (test-utils/create-connection)]
+      (let [create-req {:parameters {:body {:description "Have fun"
+                                            :level 1}}
+                        :ds conn}
+            _ (goals/add create-req)
+            _ (goals/add create-req)
+            req {:parameters {:body {:level 1}}  :ds conn}
+            result (goals/get-all-goals req)] 
+        (is (= 200 (:status result)))
+        (is (= 2 (-> (:body result) count)))))))

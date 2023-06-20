@@ -69,3 +69,20 @@
                            :headers {"Content-Type" "text/html"}
                            :body (str "Goal not found! Loose yourself!")}))))
 
+(defn get-all-goals [req]
+  (try
+    (let [ds (:ds req)
+          level (->
+                 req
+                 :parameters
+                 :body
+                 :level)
+          goals (persistance/get-all-goals ds level)]
+      {:status  200
+       :headers {"Content-Type" "application/json"}
+       :body  goals})
+    (catch Exception e (do
+                         (prn (str "caught exception: " (.getMessage e)))
+                         {:status 500
+                          :headers {"Content-Type" "text/html"}
+                          :body (str "Goals not found! Loose yourself!")}))))

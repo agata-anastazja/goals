@@ -18,3 +18,5 @@
   (jdbc/execute-one! ds ["UPDATE goals SET active=false, last_updated= ?, date_completed= ?  WHERE id = ?"
                          current-time current-time id]))
 
+(defn get-all-goals [ds level] 
+  (jdbc/execute! ds ["SELECT * FROM goals where goal_level=?::TEXT" level] {:builder-fn rs/as-unqualified-lower-maps}))

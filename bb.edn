@@ -3,8 +3,6 @@
                 (try
                   (clojure "-T:build" "test")
                   (finally (shell "docker rm -f db"))))
-         test-locally (do
-                (try
-                  (clojure "-T:build" "test")))
+         test-locally (clojure "-T:build" "test") 
          jar (clojure "-T:build" "ci")
          start (shell "docker compose up --build")}}

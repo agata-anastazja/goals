@@ -6,6 +6,7 @@
    [muuntaja.core :as m]
    [reitit.ring :as ring]
    [reitit.http :as http]
+   [reitit.core :as r]
    [reitit.coercion.malli :as malli]
    [reitit.http.coercion :as coercion]
    [reitit.http.interceptors.parameters :as parameters]
@@ -36,14 +37,29 @@
             :parameters {:body [:map {:closed false}
                                 [:username :string]
                                 [:password :string]]}}}] 
-   ["/goals" {:post goals/add
-              :interceptors [auth-interceptor]
-              :parameters {:body [:map {:closed false}
-                                  [:description :string]
-                                  [:level :int]
-                                  [:goal-parent {:optional true} :string]]}}]
+   ["/goals" ::goals]
    ["/goals/:id" {:get goals/get-goal
                   :interceptors [auth-interceptor]}]])
+
+
+(defn get-goals[])
+
+(defn post-goals[]
+  {:post goals/add
+   :interceptors [auth-interceptor]
+   :parameters {:body [:map {:closed false}
+                       [:description :string]
+                       [:level :int]
+                       [:goal-parent {:optional true} :string]]}})
+
+(defn my-expand [registry]
+  (fn [data opts]
+    (if (keyword? data)
+      (some-> data
+              registry
+              (r/expand opts)
+              (assoc :name data))
+      (r/expand data opts))))
 
 (defn server
   [ds]
@@ -65,7 +81,10 @@
                                        (coercion/coerce-exceptions-interceptor)
                                        (coercion/coerce-response-interceptor)
                                        (coercion/coerce-request-interceptor)
-                                       (system-interceptor ds)]}})
+                                       (system-interceptor ds)]}
+                 :expand (my-expand
+                          {::goals {:get get-goals
+                                    :post post-goals}})})
    (ring/routes
     (ring/create-default-handler
      {:not-found (constantly {:status  200

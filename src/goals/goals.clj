@@ -81,8 +81,19 @@
       {:status  200
        :headers {"Content-Type" "application/json"}
        :body  goals})
-    (catch Exception e (do
-                         (prn (str "caught exception: " (.getMessage e)))
-                         {:status 500
-                          :headers {"Content-Type" "text/html"}
-                          :body (str "Goals not found! Loose yourself!")}))))
+    (catch Exception e {:status 500
+                        :headers {"Content-Type" "text/html"}
+                        :body (str  "caught exception: " (.getMessage e))})))
+
+(defn get-all-goals-with-their-parent[req]
+  (try
+    (let [goals (-> (get-all-goals req) :body)
+          ds (:ds req)
+          goals-with-parent (mapv (fn [goal] (assoc goal :goal-parent (persistance/get-goal-from-db (:goal_parent goal) ds))) goals)]
+      {:status  200
+       :headers {"Content-Type" "application/json"}
+       :body  goals-with-parent})
+    (catch Exception e
+      {:status 500
+       :headers {"Content-Type" "text/html"}
+       :body (str  "caught exception: " (.getMessage e))})))

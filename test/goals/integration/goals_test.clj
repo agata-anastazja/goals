@@ -92,8 +92,8 @@
   (testing "get all goals returns 2 created goals"
     (with-open [conn (test-utils/create-connection)]
       (let [create-yearly-goal-req {:parameters {:body {:description "Have fun for a year"
-                                            :level 3}}
-                        :ds conn}
+                                                        :level 3}}
+                                    :ds conn}
             yearly-goal-res (goals/add create-yearly-goal-req)
             parent-id (-> (json/read-json (:body yearly-goal-res)) :id parse-uuid)
             create-monthly-goal-req {:parameters {:body {:description "Have fun for a month"
@@ -103,6 +103,9 @@
             monthly-goal (goals/add create-monthly-goal-req)
             child-id (-> (json/read-json (:body monthly-goal)) :id parse-uuid)
             req {:parameters {:body {:level 2}}  :ds conn}
-            result (goals/get-all-goals-with-their-parent req)]
+            result (goals/get-all-goals-with-their-parent req)
+            first-result (first (:body result))]
         (is (= 200 (:status result)))
-        (is (= 1 (-> (:body result) count)))))))
+        (is (= 1 (-> (:body result) count)))
+        (is (= child-id (-> first-result :id )))
+        (is (= parent-id (-> first-result :goal-parent :id)))))))

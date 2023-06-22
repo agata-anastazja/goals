@@ -36,12 +36,18 @@
             :parameters {:body [:map {:closed false}
                                 [:username :string]
                                 [:password :string]]}}}] 
-   ["/goals" {:post goals/add
+   ["/goals/save" {:post goals/add
               :interceptors [auth-interceptor]
               :parameters {:body [:map {:closed false}
                                   [:description :string]
                                   [:level :int]
                                   [:goal-parent {:optional true} :string]]}}]
+   ["/goals" {:get goals/get-all-goals
+              :interceptors [auth-interceptor]
+              :parameters {:body [:map {:closed false}
+                                  
+                                  [:level :int]
+                           ]}}]
    ["/goals/:id" {:get goals/get-goal
                   :interceptors [auth-interceptor]}]])
 

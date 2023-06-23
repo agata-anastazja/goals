@@ -45,9 +45,7 @@
    ["/goals" {:get goals/get-all-goals
               :interceptors [auth-interceptor]
               :parameters {:body [:map {:closed false}
-                                  
-                                  [:level :int]
-                           ]}}]
+                                  [:level :int]]}}]
    ["/goals/:id" {:get goals/get-goal
                   :interceptors [auth-interceptor]}]])
 

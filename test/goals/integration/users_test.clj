@@ -19,6 +19,7 @@
         (is (=  200 (:status result)))
         (is (= last-inserted-row  {:username "Rahul"
                                    :password "Secretpassword"})))))
+  
   (testing "only creates users with unique usernames" 
     (with-open [conn (test-utils/create-connection)]
       (let [_ (users/add {:parameters

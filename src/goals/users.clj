@@ -1,22 +1,20 @@
 (ns goals.users
   (:require
-   [next.jdbc :as jdbc]
-   [clojure.string :as str]))
+   [goals.persistance.users :as persistance]
+   [clojure.string :as str]
+   [clojure.data.json :as json]))
 
-(defn save [{:keys [username password]} ds]
-  (let [id (random-uuid)]
-    (jdbc/execute-one! ds ["INSERT INTO users(id, username, password)
-      values(?, ?, ?)" id username password])))
-
-(defn get-user [ds username password]
-  (jdbc/execute-one! ds ["SELECT * FROM users WHERE username = ? AND password = ?" username password]))
-
+(defn user-exists? [ds username password]
+  (some? (persistance/get-user ds username password)))
 
 (defn add [{{:keys [body]} :parameters ds :ds}] 
   (try
-    (let [user body]
-      (save user ds)
-      {:status  200})
+    (let [user-id  (random-uuid)
+          user (assoc body :user-id user-id )]
+      (persistance/save user ds)
+      {:status  200
+       :headers {"Content-Type" "application/json"}
+       :body  (json/write-str {:id user-id})})
     (catch Exception e
       (let [message (.getMessage e)]
         (cond

@@ -1,9 +1,8 @@
 (ns goals.goals
     (:require
      [goals.parser :as parser]
-     [goals.persistance :as persistance]
+     [goals.persistance.goals :as persistance]
      [clojure.data.json :as json]))
-
 
 (defn valid-goal? [goal ds]
   (or (nil? (:goal-parent goal))

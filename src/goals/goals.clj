@@ -11,6 +11,7 @@
     (persistance/get-goal-from-db goal-parent-id ds))))
 
 (defn add [req] 
+  (println req)
   (try
     (let [goal (parser/parse (->
                             req

@@ -44,13 +44,9 @@
 
 (defn get-goals[])
 
-(defn post-goals[]
-  {:post goals/add
-   :interceptors [auth-interceptor]
-   :parameters {:body [:map {:closed false}
-                       [:description :string]
-                       [:level :int]
-                       [:goal-parent {:optional true} :string]]}})
+(defn post-goals [req]
+  (println "here")
+  (goals/add req))
 
 (defn my-expand [registry]
   (fn [data opts]

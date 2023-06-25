@@ -121,3 +121,27 @@
         {:status 500
          :headers {"Content-Type" "text/html"}
          :body (str  "caught exception: " message)}))))
+
+
+(defn get-with-user[req]
+  (try
+    (let [level (->
+                 req
+                 :parameters
+                 :body
+                 :level)
+          {{:strs [authorization]} :headers} req
+          [username password] (auth/decode-auth authorization)
+          ds (:ds req)
+          user (->>
+                (user-persistance/get-user ds username password))
+          user-id (:id user)
+          goals (persistance/get-all-goals-with-user ds user-id level)] 
+      {:status  200
+       :headers {"Content-Type" "application/json"}
+       :body  goals})
+    (catch Exception e
+      (let [message (.getMessage e)]
+        {:status 500
+         :headers {"Content-Type" "text/html"}
+         :body (str  "caught exception: " message)}))))

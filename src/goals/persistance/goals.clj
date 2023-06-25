@@ -26,3 +26,7 @@
 
 (defn get-all-goals [ds level] 
   (jdbc/execute! ds ["SELECT * FROM goals where goal_level=?::TEXT" level] {:builder-fn rs/as-unqualified-lower-maps}))
+
+
+(defn get-all-goals-with-user [ds user-id level]
+  (jdbc/execute! ds ["SELECT * FROM goals where goal_level=?::TEXT AND user_id=?" level user-id] {:builder-fn rs/as-unqualified-lower-maps}))

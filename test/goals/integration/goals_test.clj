@@ -114,7 +114,7 @@
 
 
 (deftest test-get-user-goals
-  (testing "get gaols for a user"
+  (testing "add gaols for a user"
     (with-open [conn (test-utils/create-connection)]
       (let [user {:username "RahulUnique"
                   :password "secretsecret"}
@@ -129,4 +129,35 @@
                  :headers {"authorization" auth-header}}
             result (goals/add-with-user req)]
         (is (= 200 (:status result)))
-        (is (uuid? (-> (json/read-json (:body result)) :id parse-uuid)))))))
+        (is (uuid? (-> (json/read-json (:body result)) :id parse-uuid))))))
+  (testing "get gaols for a user"
+    (with-open [conn (test-utils/create-connection)]
+      (let [user-req {:parameters {:body {:username "RahulUnique"
+                                          :password "secretsecret"}}
+                      :ds conn}
+            _ (test-utils/ensure-user user-req)
+            user (user-persistance/get-user conn "RahulUnique" "secretsecret")
+            auth-header (test-utils/auth-header user)
+            req {:parameters {:body {:description "Rahuls has fun for a year"
+                                     :level 3}}
+                 :ds conn
+                 :headers {"authorization" auth-header}}
+            _ (goals/add-with-user req)
+
+            user-req2 {:parameters {:body {:username "Agata"
+                                           :password "secretsecret"}}
+                       :ds conn}
+            _ (test-utils/ensure-user user-req2)
+            user2 (user-persistance/get-user conn "Agata" "secretsecret")
+            auth-header2 (test-utils/auth-header user2)
+            req2 {:parameters {:body {:description "Have fun for a year"
+                                      :level 3}}
+                  :ds conn
+                  :headers {"authorization" auth-header2}}
+            _ (goals/add-with-user req2)
+            req3 {:parameters {:body {:level 3}}
+                  :ds conn
+                  :headers {"authorization" auth-header}}
+            result (goals/get-with-user req3)]
+        (is (= 200 (:status result)))
+        (is (= 1 (-> (:body result) count)))))))

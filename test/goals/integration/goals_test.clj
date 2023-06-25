@@ -5,12 +5,14 @@
    [next.jdbc :as jdbc]
    [next.jdbc.result-set :as rs]
    [clojure.data.json :as json]
-   [goals.integration.test-utils :as test-utils]))
+   [goals.integration.test-utils :as test-utils]
+   [goals.persistance.users :as user-persistance]))
 
 (deftest test-app
   (testing "adding a weekly goal"
    (with-open [conn (test-utils/create-connection)]
-    (let [req {:parameters {:body {:description "Have fun doing serious side projects"
+    (let [
+          req {:parameters {:body {:description "Have fun doing serious side projects"
                                    :level 1}}
                :ds conn}
           result (goals/add req)]
@@ -109,3 +111,22 @@
         (is (= 1 (-> (:body result) count)))
         (is (= child-id (-> first-result :id )))
         (is (= parent-id (-> first-result :goal-parent :id)))))))
+
+
+(deftest test-get-user-goals
+  (testing "get gaols for a user"
+    (with-open [conn (test-utils/create-connection)]
+      (let [user {:username "RahulUnique"
+                  :password "secretsecret"}
+            user-req {:parameters {:body user}
+                      :ds conn}
+            _ (test-utils/ensure-user user-req) 
+            user (user-persistance/get-user conn "RahulUnique" "secretsecret")
+            auth-header (test-utils/auth-header user)
+            req {:parameters {:body {:description "Have fun for a year"
+                                     :level 3}}
+                 :ds conn
+                 :headers {"authorization" auth-header}}
+            result (goals/add-with-user req)]
+        (is (= 200 (:status result)))
+        (is (uuid? (-> (json/read-json (:body result)) :id parse-uuid)))))))

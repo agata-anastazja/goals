@@ -2,7 +2,9 @@
     (:require
      [goals.parser :as parser]
      [goals.persistance.goals :as persistance]
-     [clojure.data.json :as json]))
+     [goals.persistance.users :as user-persistance]
+     [clojure.data.json :as json]
+     [goals.auth :as auth]))
 
 (defn valid-goal? [goal ds]
   (or (nil? (:goal-parent goal))
@@ -96,3 +98,26 @@
       {:status 500
        :headers {"Content-Type" "text/html"}
        :body (str  "caught exception: " (.getMessage e))})))
+
+(defn add-with-user [req]
+  (try
+    (let [goal (parser/parse (->
+                              req
+                              :parameters
+                              :body))
+          {{:strs [authorization]} :headers} req
+          [username password] (auth/decode-auth authorization)
+          ds (:ds req)
+          user (->> 
+                (user-persistance/get-user ds username password))
+          user-id (:id user)
+          goal-with-user-id (assoc goal :user-id user-id)]
+          (persistance/save-goal-with-user goal-with-user-id ds)
+          {:status  200
+           :headers {"Content-Type" "application/json"}
+           :body  (json/write-str {:id (:id goal)})})
+    (catch Exception e
+      (let [message (.getMessage e)]
+        {:status 500
+         :headers {"Content-Type" "text/html"}
+         :body (str  "caught exception: " message)}))))

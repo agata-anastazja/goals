@@ -1,0 +1,5 @@
+{:up   ["CREATE TABLE IF NOT EXISTS buddy_user (
+         buddy_id UUID REFERENCES buddies(id) ON UPDATE CASCADE ON DELETE CASCADE
+         , user_id UUID REFERENCES users(id) ON UPDATE CASCADE
+         , CONSTRAINT buddy_user_pkey PRIMARY KEY (buddy_id, user_id));"]
+ :down ["DROP TABLE buddy_user;"]}

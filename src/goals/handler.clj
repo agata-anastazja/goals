@@ -36,22 +36,21 @@
             :parameters {:body [:map {:closed false}
                                 [:username :string]
                                 [:password :string]]}}}] 
-   ["/goals/user/get" {:get goals/get-with-user
-                       :interceptors [auth-interceptor]
-                       :parameters {:body [:map {:closed false}
-                                           [:level :int]]}}]
-   ["/goals/user/save" {:post goals/add-with-user
-              :interceptors [auth-interceptor]
-              :parameters {:body [:map {:closed false}
-                                  [:description :string]
-                                  [:level :int]
-                                  [:goal-parent {:optional true} :string]]}}]
-   ["/goals" {:get goals/get-all-goals
-              :interceptors [auth-interceptor]
-              :parameters {:body [:map {:closed false}
-                                  [:level :int]]}}]
+
+   ["/goals" {:get {:handler goals/get-with-user
+                                  :interceptors [auth-interceptor]
+                                  :parameters {:body [:map {:closed false}
+                                                      [:level :int]]}}
+                   :post {:handler goals/add-with-user
+                          :interceptors [auth-interceptor]
+                          :parameters {:body [:map {:closed false}
+                                              [:description :string]
+                                              [:level :int]
+                                              [:goal-parent {:optional true} :string]]}}}]
+
    ["/goals/:id" {:get goals/get-goal
-                  :interceptors [auth-interceptor]}]])
+                      :interceptors [auth-interceptor]}]
+  ])
 
 (defn server
   [ds]

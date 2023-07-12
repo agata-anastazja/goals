@@ -18,3 +18,12 @@
 
 (defn auth-header [user]
   (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (str (:username user) ":" (:password user))))))
+
+
+(defn default-auth-header[conn]
+  (let [user {:username "RahulUnique"
+              :password "secretsecret"}
+        user-req {:parameters {:body user}
+                  :ds conn}
+        _ (ensure-user user-req)]
+    (auth-header user)))

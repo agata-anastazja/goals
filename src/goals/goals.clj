@@ -11,29 +11,6 @@
    (let [goal-parent-id (:goal-parent goal)]
     (persistance/get-goal-from-db goal-parent-id ds))))
 
-(defn add [req] 
-  (try
-    (let [goal (parser/parse (->
-                            req
-                            :parameters
-                            :body))
-          ds (:ds req)]
-      (if (valid-goal? goal ds)
-        (do
-          (persistance/save-goal goal ds)
-          {:status  200
-           :headers {"Content-Type" "application/json"}
-           :body  (json/write-str {:id (:id goal)})})
-        {:status 400
-         :headers {"Content-Type" "text/html"}
-         :body (str "Goal not saved! Save yourself! Invalid request")}))
-
-    (catch Exception e (do
-                         (prn (str "caught exception: " (.getMessage e)))
-                         {:status 500
-                          :headers {"Content-Type" "text/html"}
-                          :body (str "Goal not saved! Save yourself!")}))))
-
 
 (defn complete [req]
   (try
@@ -99,7 +76,7 @@
        :headers {"Content-Type" "text/html"}
        :body (str  "caught exception: " (.getMessage e))})))
 
-(defn add-with-user [req]
+(defn add [req]
   (try
     (let [goal (parser/parse (->
                               req
@@ -112,10 +89,15 @@
                 (user-persistance/get-user ds username password))
           user-id (:id user)
           goal-with-user-id (assoc goal :user-id user-id)]
-          (persistance/save-goal-with-user goal-with-user-id ds)
-          {:status  200
-           :headers {"Content-Type" "application/json"}
-           :body  (json/write-str {:id (:id goal)})})
+       (if (valid-goal? goal ds)
+
+         (do (persistance/save-goal-with-user goal-with-user-id ds)
+             {:status  200
+              :headers {"Content-Type" "application/json"}
+              :body  (json/write-str {:id (:id goal)})})
+         {:status 400
+          :headers {"Content-Type" "text/html"}
+          :body (str "Goal not saved! Save yourself! Invalid request")}))
     (catch Exception e
       (let [message (.getMessage e)]
         {:status 500

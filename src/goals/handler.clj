@@ -37,11 +37,11 @@
                                 [:username :string]
                                 [:password :string]]}}}] 
 
-   ["/goals" {:get {:handler goals/get-with-user
+   ["/goals" {:get {:handler goals/get-all-goals
                                   :interceptors [auth-interceptor]
                                   :parameters {:body [:map {:closed false}
                                                       [:level :int]]}}
-                   :post {:handler goals/add-with-user
+                   :post {:handler goals/add
                           :interceptors [auth-interceptor]
                           :parameters {:body [:map {:closed false}
                                               [:description :string]

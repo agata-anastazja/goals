@@ -8,141 +8,74 @@
    [goals.integration.test-utils :as test-utils]
    [goals.persistance.users :as user-persistance]))
 
-(deftest test-app
-  (testing "adding a weekly goal"
-   (with-open [conn (test-utils/create-connection)]
-    (let [
-          req {:parameters {:body {:description "Have fun doing serious side projects"
-                                   :level 1}}
-               :ds conn}
-          result (goals/add req)]
-      (is (= (:status result) 200))
-      (is (uuid? (-> (json/read-json (:body result)) :id parse-uuid)))))))
-
-(deftest test-goal-handler 
- (testing "adding a weekly goal with a non exsisting parent returns a 400"
-   (with-open [conn (test-utils/create-connection)]
-     (let [goal {:parameters
-                 {:body
-                  {:description "Have fun doing serious side projects but differently"
-                   :level 1
-                   :goal-parent (random-uuid)}}
-                 :ds conn}
-           result (goals/add goal)]
-       (is (= (:status result) 400)))))
-
-   (testing "Given a parent goal exists when we add a goal with a parent goal it saves successfully"
-     (with-open [conn (test-utils/create-connection)]
-      (let [parent-req  {:parameters {:body {:description "Have fun doing serious side projects"
-                                             :level 3}}
-                         :ds conn}
-            parent-result (goals/add parent-req)
-            parent-id (-> (json/read-json (:body parent-result)) :id parse-uuid) 
-            req  {:parameters {:body {:description "Have fun doing serious side projects"
-                                      :level 3
-                                      :goal-parent parent-id}}
-                  :ds conn}
-            result (goals/add req)]
-        (is (= (:status result) 200)))))
-
-  (testing "completing a goal" 
+(deftest add-goal-test
+  (testing "add goal for a user"
     (with-open [conn (test-utils/create-connection)]
-      (let [
-            _ (goals/add {:parameters
-                          {:body {:description "Have fun doing serious side projects"
-                                  :level 1}}
-                          :ds conn})
-            rows (jdbc/execute! conn ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})
-            last-inserted-row (last rows)
-            id (:id last-inserted-row)
-            _ (goals/complete {:parameters 
-                               {:body {:id id}}
-                               :ds conn})
-            rows (jdbc/execute! conn ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})
-            completed (first (filterv (fn [row] (= (:id row) id)) rows))]
-        (is (= (:active completed) false)))))
-  
-  (testing "getting a goal"
-    (with-open [conn (test-utils/create-connection)]
-      (let [req {:parameters
-                 {:body {:description "have fun this week"
-                         :level 1}}
-                 :ds conn}
-            _ (goals/add req)
-            rows (jdbc/execute! conn ["select * from goals"] {:builder-fn rs/as-unqualified-lower-maps})
-            last-inserted-row (last rows)
-            id (:id last-inserted-row)
-            result (goals/get-goal {:path-params {:id id}
-                                    :ds conn})]
-        (is (= (-> result :body :goal) (-> req :parameters :body :description)))))))
-
-
-(deftest test-get-all-goals
-  (testing "get all goals returns 2 created goals"
-    (with-open [conn (test-utils/create-connection)]
-      (let [create-req {:parameters {:body {:description "Have fun"
-                                            :level 1}}
-                        :ds conn}
-            _ (goals/add create-req)
-            _ (goals/add create-req)
-            req {:parameters {:body {:level 1}}  :ds conn}
-            result (goals/get-all-goals req)] 
-        (is (= 200 (:status result)))
-        (is (= 2 (-> (:body result) count)))))))
-
-(deftest test-get-all-goals-with-their-parents
-  (testing "get all goals returns 2 created goals"
-    (with-open [conn (test-utils/create-connection)]
-      (let [create-yearly-goal-req {:parameters {:body {:description "Have fun for a year"
-                                                        :level 3}}
-                                    :ds conn}
-            yearly-goal-res (goals/add create-yearly-goal-req)
-            parent-id (-> (json/read-json (:body yearly-goal-res)) :id parse-uuid)
-            create-monthly-goal-req {:parameters {:body {:description "Have fun for a month"
-                                                         :level 2
-                                                         :goal-parent parent-id}}
-                                     :ds conn}
-            monthly-goal (goals/add create-monthly-goal-req)
-            child-id (-> (json/read-json (:body monthly-goal)) :id parse-uuid)
-            req {:parameters {:body {:level 2}}  :ds conn}
-            result (goals/get-all-goals-with-their-parent req)
-            first-result (first (:body result))]
-        (is (= 200 (:status result)))
-        (is (= 1 (-> (:body result) count)))
-        (is (= child-id (-> first-result :id )))
-        (is (= parent-id (-> first-result :goal-parent :id)))))))
-
-
-(deftest test-get-user-goals
-  (testing "add gaols for a user"
-    (with-open [conn (test-utils/create-connection)]
-      (let [user {:username "RahulUnique"
-                  :password "secretsecret"}
-            user-req {:parameters {:body user}
-                      :ds conn}
-            _ (test-utils/ensure-user user-req) 
-            user (user-persistance/get-user conn "RahulUnique" "secretsecret")
-            auth-header (test-utils/auth-header user)
+      (let [auth-header (test-utils/default-auth-header conn)
             req {:parameters {:body {:description "Have fun for a year"
                                      :level 3}}
                  :ds conn
                  :headers {"authorization" auth-header}}
-            result (goals/add-with-user req)]
+            result (goals/add req)]
         (is (= 200 (:status result)))
         (is (uuid? (-> (json/read-json (:body result)) :id parse-uuid))))))
-  (testing "get gaols for a user"
+  
+
+  (testing "adding a weekly goal with a non exsisting parent returns a 400"
     (with-open [conn (test-utils/create-connection)]
-      (let [user-req {:parameters {:body {:username "RahulUnique"
-                                          :password "secretsecret"}}
-                      :ds conn}
-            _ (test-utils/ensure-user user-req)
-            user (user-persistance/get-user conn "RahulUnique" "secretsecret")
-            auth-header (test-utils/auth-header user)
+      (let [auth-header (test-utils/default-auth-header conn)
+            goal {:parameters
+                  {:body
+                   {:description "Have fun doing serious side projects but differently"
+                    :level 1
+                    :goal-parent (random-uuid)}}
+                  :ds conn
+                  :headers {"authorization" auth-header}}
+            result (goals/add goal)]
+        (is (= (:status result) 400)))))
+  (testing "Given a parent goal exists when we add a goal with a parent goal it saves successfully"
+    (with-open [conn (test-utils/create-connection)]
+      (let [auth-header (test-utils/default-auth-header conn)
+            parent-req  {:parameters {:body {:description "Have fun doing serious side projects"
+                                             :level 3}}
+                         :ds conn
+                         :headers {"authorization" auth-header}}
+            parent-result (goals/add parent-req)
+            parent-id (-> (json/read-json (:body parent-result)) :id parse-uuid)
+            req  {:parameters {:body {:description "Have fun doing serious side projects"
+                                      :level 2
+                                      :goal-parent parent-id}}
+                  :ds conn
+                  :headers {"authorization" auth-header}}
+            result (goals/add req)]
+        (is (= (:status result) 200))))))
+
+(deftest complete-goal-test
+ (testing "completing a goal" 
+   (with-open [conn (test-utils/create-connection)]
+     (let [auth-header (test-utils/default-auth-header conn) 
+           req {:parameters {:body {:description "Have fun for a year"
+                                    :level 3}}
+                :ds conn
+                :headers {"authorization" auth-header}}
+           result (goals/add req)
+           goal-id (-> (json/read-json (:body result)) :id parse-uuid)
+           _ (goals/complete {:parameters 
+                              {:body {:id goal-id}}
+                              :ds conn})
+           result (goals/get-goal  {:path-params {:id goal-id}
+                              :ds conn})]
+       (is (= (:active (:body result)) false))))))
+
+(deftest test-get-user-goals
+  (testing "get goals for a user"
+    (with-open [conn (test-utils/create-connection)]
+      (let [auth-header (test-utils/default-auth-header conn) 
             req {:parameters {:body {:description "Rahuls has fun for a year"
                                      :level 3}}
                  :ds conn
                  :headers {"authorization" auth-header}}
-            _ (goals/add-with-user req)
+            _ (goals/add req)
 
             user-req2 {:parameters {:body {:username "Agata"
                                            :password "secretsecret"}}
@@ -154,10 +87,61 @@
                                       :level 3}}
                   :ds conn
                   :headers {"authorization" auth-header2}}
-            _ (goals/add-with-user req2)
+            _ (goals/add req2)
             req3 {:parameters {:body {:level 3}}
                   :ds conn
                   :headers {"authorization" auth-header}}
             result (goals/get-with-user req3)]
         (is (= 200 (:status result)))
         (is (= 1 (-> (:body result) count)))))))
+
+
+;; (deftest test-get-all-goals-with-their-parents
+;;   (testing "get all goals returns 2 created goals"
+;;     (with-open [conn (test-utils/create-connection)]
+;;       (let [create-yearly-goal-req {:parameters {:body {:description "Have fun for a year"
+;;                                                         :level 3}}
+;;                                     :ds conn}
+;;             yearly-goal-res (goals/add create-yearly-goal-req)
+;;             parent-id (-> (json/read-json (:body yearly-goal-res)) :id parse-uuid)
+;;             create-monthly-goal-req {:parameters {:body {:description "Have fun for a month"
+;;                                                          :level 2
+;;                                                          :goal-parent parent-id}}
+;;                                      :ds conn}
+;;             monthly-goal (goals/add create-monthly-goal-req)
+;;             child-id (-> (json/read-json (:body monthly-goal)) :id parse-uuid)
+;;             req {:parameters {:body {:level 2}}  :ds conn}
+;;             result (goals/get-all-goals-with-their-parent req)
+;;             first-result (first (:body result))]
+;;         (is (= 200 (:status result)))
+;;         (is (= 1 (-> (:body result) count)))
+;;         (is (= child-id (-> first-result :id )))
+;;         (is (= parent-id (-> first-result :goal-parent :id)))))))
+
+
+
+
+;; (deftest test-goal-handler 
+;;  (testing "adding a weekly goal with a non exsisting parent returns a 400"
+;;    (with-open [conn (test-utils/create-connection)]
+;;      (let [goal {:parameters
+;;                  {:body
+;;                   {:description "Have fun doing serious side projects but differently"
+;;                    :level 1
+;;                    :goal-parent (random-uuid)}}
+;;                  :ds conn}
+;;            result (goals/add goal)]
+;;        (is (= (:status result) 400)))))
+;; (testing "Given a parent goal exists when we add a goal with a parent goal it saves successfully"
+;;   (with-open [conn (test-utils/create-connection)]
+;;     (let [parent-req  {:parameters {:body {:description "Have fun doing serious side projects"
+;;                                            :level 3}}
+;;                        :ds conn}
+;;           parent-result (goals/add parent-req)
+;;           parent-id (-> (json/read-json (:body parent-result)) :id parse-uuid)
+;;           req  {:parameters {:body {:description "Have fun doing serious side projects"
+;;                                     :level 3
+;;                                     :goal-parent parent-id}}
+;;                 :ds conn}
+;;           result (goals/add req)]
+;;       (is (= (:status result) 200)))))

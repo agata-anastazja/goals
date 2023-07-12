@@ -4,13 +4,8 @@
 [next.jdbc.result-set :as rs]))
 
 
-(defn save-goal [{:keys [id created-at last-updated  description level goal-parent deadline active user-id]}
-                 ds]
-  (jdbc/execute-one! ds ["INSERT INTO goals(id, created_at, last_updated, goal, goal_level, goal_parent, deadline, active, user_id)
-  values(?, ?, ?, ?, ?, ?, ?, ?, ?)"
-                         id created-at last-updated  description level goal-parent deadline active user-id]))
 
-(defn save-goal-with-user [{:keys [id created-at last-updated  description level goal-parent deadline active user-id]}
+(defn save-goal [{:keys [id created-at last-updated  description level goal-parent deadline active user-id]}
                            ds]
   (jdbc/execute-one! ds ["INSERT INTO goals(id, user_id, created_at, last_updated, goal, goal_level, goal_parent, deadline, active)
   values(?, ?, ?, ?, ?, ?, ?, ?, ?)"

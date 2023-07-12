@@ -11,6 +11,13 @@
    (let [goal-parent-id (:goal-parent goal)]
     (persistance/get-goal-from-db goal-parent-id ds))))
 
+(defn get-user-id [req]
+  (let [{{:strs [authorization]} :headers} req
+        [username password] (auth/decode-auth authorization)
+        ds (:ds req)
+        user (->>
+              (user-persistance/get-user ds username password))]
+    (:id user)))
 
 (defn complete [req]
   (try
@@ -31,8 +38,6 @@
                           :headers {"Content-Type" "text/html"}
                           :body (str "Goal not completed! Complete yourself!")}))))
 
-
-
 (defn get-goal [req]
    (try
      (let [{{:keys [id]} :path-params} req
@@ -47,23 +52,53 @@
                            :headers {"Content-Type" "text/html"}
                            :body (str "Goal not found! Loose yourself!")}))))
 
-(defn get-all-goals [req]
+
+(defn add [req]
   (try
-    (let [ds (:ds req)
-          level (->
+    (let [goal (parser/parse (->
+                              req
+                              :parameters
+                              :body))
+          ds (:ds req)
+          user-id (get-user-id req)
+          goal-with-user-id (assoc goal :user-id user-id)]
+       (if (valid-goal? goal ds)
+         (do
+           (persistance/save-goal goal-with-user-id ds)
+           {:status  200
+            :headers {"Content-Type" "application/json"}
+            :body  (json/write-str {:id (:id goal)})})
+         {:status 400
+          :headers {"Content-Type" "text/html"}
+          :body (str "Goal not saved! Save yourself! Invalid request")}))
+    (catch Exception e
+      (let [message (.getMessage e)]
+        {:status 500
+         :headers {"Content-Type" "text/html"}
+         :body (str  "caught exception: " message)}))))
+
+
+(defn get-all-goals[req]
+  (try
+    (let [level (->
                  req
                  :parameters
                  :body
                  :level)
-          goals (persistance/get-all-goals ds level)]
+          user-id (get-user-id req)
+          ds (:ds req)
+          goals (persistance/get-all-goals-with-user ds user-id level)] 
       {:status  200
        :headers {"Content-Type" "application/json"}
        :body  goals})
-    (catch Exception e {:status 500
-                        :headers {"Content-Type" "text/html"}
-                        :body (str  "caught exception: " (.getMessage e))})))
+    (catch Exception e
+      (let [message (.getMessage e)]
+        {:status 500
+         :headers {"Content-Type" "text/html"}
+         :body (str  "caught exception: " message)}))))
 
-(defn get-all-goals-with-their-parent[req]
+
+(defn get-all-goals-with-their-parent [req]
   (try
     (let [goals (-> (get-all-goals req) :body)
           ds (:ds req)
@@ -75,55 +110,3 @@
       {:status 500
        :headers {"Content-Type" "text/html"}
        :body (str  "caught exception: " (.getMessage e))})))
-
-(defn add [req]
-  (try
-    (let [goal (parser/parse (->
-                              req
-                              :parameters
-                              :body))
-          {{:strs [authorization]} :headers} req
-          [username password] (auth/decode-auth authorization)
-          ds (:ds req)
-          user (->> 
-                (user-persistance/get-user ds username password))
-          user-id (:id user)
-          goal-with-user-id (assoc goal :user-id user-id)]
-       (if (valid-goal? goal ds)
-
-         (do (persistance/save-goal-with-user goal-with-user-id ds)
-             {:status  200
-              :headers {"Content-Type" "application/json"}
-              :body  (json/write-str {:id (:id goal)})})
-         {:status 400
-          :headers {"Content-Type" "text/html"}
-          :body (str "Goal not saved! Save yourself! Invalid request")}))
-    (catch Exception e
-      (let [message (.getMessage e)]
-        {:status 500
-         :headers {"Content-Type" "text/html"}
-         :body (str  "caught exception: " message)}))))
-
-
-(defn get-with-user[req]
-  (try
-    (let [level (->
-                 req
-                 :parameters
-                 :body
-                 :level)
-          {{:strs [authorization]} :headers} req
-          [username password] (auth/decode-auth authorization)
-          ds (:ds req)
-          user (->>
-                (user-persistance/get-user ds username password))
-          user-id (:id user)
-          goals (persistance/get-all-goals-with-user ds user-id level)] 
-      {:status  200
-       :headers {"Content-Type" "application/json"}
-       :body  goals})
-    (catch Exception e
-      (let [message (.getMessage e)]
-        {:status 500
-         :headers {"Content-Type" "text/html"}
-         :body (str  "caught exception: " message)}))))

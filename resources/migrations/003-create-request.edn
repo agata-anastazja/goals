@@ -1,6 +1,6 @@
-{:up   ["CREATE TABLE IF NOT EXISTS requests (
+{:up   ["CREATE TABLE IF NOT EXISTS buddy_requests (
          id UUID PRIMARY KEY,
          requestee_id UUID REFERENCES users(id) ON DELETE CASCADE,
          requester_id UUID REFERENCES users(id) ON DELETE CASCADE,
-         status TEXT UNIQUE);"]
- :down ["DROP TABLE requests;"]}
+         status TEXT);"]
+ :down ["DROP TABLE buddy_requests;"]}

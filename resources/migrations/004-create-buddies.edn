@@ -1,4 +1,0 @@
-{:up   ["CREATE TABLE IF NOT EXISTS buddies (
-         id UUID PRIMARY KEY,
-         status TEXT UNIQUE);"]
- :down ["DROP TABLE buddies;"]}

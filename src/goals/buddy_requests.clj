@@ -1,0 +1,1 @@
+(ns goals.buddy-requests)

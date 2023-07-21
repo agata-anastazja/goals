@@ -2,6 +2,7 @@
   (:require
    [goals.goals :as goals]
    [goals.users :as users] 
+   [goals.buddy-requests :as buddy-requests]
    [goals.auth :as auth]
    [muuntaja.core :as m]
    [reitit.ring :as ring]
@@ -35,22 +36,23 @@
     {:post {:handler users/add
             :parameters {:body [:map {:closed false}
                                 [:username :string]
-                                [:password :string]]}}}] 
-
+                                [:password :string]]}}}]
+   ["/buddy-requests" {:post {:handler buddy-requests/add 
+                              :parameters {:body [:map {:closed false}
+                                                  [:requestee-id :string]]}}}]
    ["/goals" {:get {:handler goals/get-all-goals
-                                  :interceptors [auth-interceptor]
-                                  :parameters {:body [:map {:closed false}
-                                                      [:level :int]]}}
-                   :post {:handler goals/add
-                          :interceptors [auth-interceptor]
-                          :parameters {:body [:map {:closed false}
-                                              [:description :string]
-                                              [:level :int]
-                                              [:goal-parent {:optional true} :string]]}}}]
+                    :interceptors [auth-interceptor]
+                    :parameters {:body [:map {:closed false}
+                                        [:level :int]]}}
+              :post {:handler goals/add
+                     :interceptors [auth-interceptor]
+                     :parameters {:body [:map {:closed false}
+                                         [:description :string]
+                                         [:level :int]
+                                         [:goal-parent {:optional true} :string]]}}}]
 
    ["/goals/:id" {:get goals/get-goal
-                      :interceptors [auth-interceptor]}]
-  ])
+                  :interceptors [auth-interceptor]}]])
 
 (defn server
   [ds]

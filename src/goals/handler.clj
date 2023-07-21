@@ -39,7 +39,9 @@
                                 [:password :string]]}}}]
    ["/buddy-requests" {:post {:handler buddy-requests/add 
                               :parameters {:body [:map {:closed false}
-                                                  [:requestee-id :string]]}}}]
+                                                  [:requestee-id :string]]}}
+                       :get {:handler buddy-requests/get-received-requests
+                             :interceptors [auth-interceptor]}}]
    ["/goals" {:get {:handler goals/get-all-goals
                     :interceptors [auth-interceptor]
                     :parameters {:body [:map {:closed false}

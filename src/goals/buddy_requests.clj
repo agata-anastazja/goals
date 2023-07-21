@@ -34,3 +34,16 @@
          :headers {"Content-Type" "text/html"}
          :body (str  "caught exception: " message)}))))
 
+(defn get-received-requests[req]
+  (try
+    (let [ds (:ds req)
+          requestee-id (get-user-id req)
+          received-buddy-requests (persistance/get-received-requests requestee-id ds)] 
+      {:status  200
+       :headers {"Content-Type" "application/json"}
+       :body  (json/write-str {:buddy-requests received-buddy-requests})})
+    (catch Exception e
+      (let [message (.getMessage e)]
+        {:status 500
+         :headers {"Content-Type" "text/html"}
+         :body (str  "caught exception: " message)}))))

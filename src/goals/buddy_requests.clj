@@ -16,6 +16,7 @@
 
 (defn add [req]
   (try
+    (prn "here")
     (let [requestee-id (->
                         req
                         :parameters
@@ -24,6 +25,8 @@
                         parse-uuid)
           ds (:ds req)
           requester-id (get-user-id req)]
+      (prn "requestee "(uuid? requestee-id))
+      (prn "requester "(uuid? requester-id))
       (persistance/save requestee-id requester-id ds)
       {:status  200
        :headers {"Content-Type" "application/json"}

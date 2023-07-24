@@ -14,17 +14,23 @@
                       :ds conn}
             requester (test-utils/ensure-user user-req)
             requester-id (-> (json/read-json (:body requester)) :id parse-uuid)
+            _ (prn requester-id)
             auth-header (test-utils/auth-header user)
             requestee {:username "Robert"
                        :password "Secretpassword"}
             requestee-user (users/add {:parameters
                                        {:body requestee}
                                        :ds conn})
-            requestee-id (-> (json/read-json (:body requestee-user)) :id parse-uuid)
+            requestee-id (-> (json/read-json (:body requestee-user)) :id)
+            _ (prn requestee-id)
+            _ (prn (uuid? requestee-id))
             req {:parameters {:body {:requestee-id requestee-id}}
                  :ds conn
                  :headers {"authorization" auth-header}}
-            _ (buddy-requests/add req)
+            added-request (buddy-requests/add req)
+            _ (prn added-request)
+            
+            _ (assert (= 200 (:status added-request)) "failed to add request")
             requestee-auth-header (test-utils/auth-header requestee)
             received-buddy-requests-req {:ds conn
                                          :headers {"authorization" requestee-auth-header}}

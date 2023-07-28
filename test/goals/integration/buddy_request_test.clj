@@ -6,7 +6,7 @@
                                              [goals.buddy-requests :as buddy-requests]))
 
 (deftest add-buddy-request-test
-  (testing "add buddy request for a user"
+  (testing "you can see your added requests"
     (with-open [conn (test-utils/create-connection)]
       (let [user {:username "RahulUnique"
                   :password "secretsecret"}
@@ -14,7 +14,7 @@
                       :ds conn}
             requester (test-utils/ensure-user user-req)
             requester-id (-> (json/read-json (:body requester)) :id parse-uuid)
-            _ (prn requester-id)
+ 
             auth-header (test-utils/auth-header user)
             requestee {:username "Robert"
                        :password "Secretpassword"}
@@ -22,14 +22,12 @@
                                        {:body requestee}
                                        :ds conn})
             requestee-id (-> (json/read-json (:body requestee-user)) :id)
-            _ (prn requestee-id)
-            _ (prn (uuid? requestee-id))
+
             req {:parameters {:body {:requestee-id requestee-id}}
                  :ds conn
                  :headers {"authorization" auth-header}}
             added-request (buddy-requests/add req)
-            _ (prn added-request)
-            
+
             _ (assert (= 200 (:status added-request)) "failed to add request")
             requestee-auth-header (test-utils/auth-header requestee)
             received-buddy-requests-req {:ds conn
@@ -37,4 +35,4 @@
             result (buddy-requests/get-received-requests received-buddy-requests-req)]
         (is (= 200 (:status result)))
         (is  (= 1 (count (-> (json/read-json (:body result)) :buddy-requests))))
-        (is  (= [{:requester-id requester-id :status "PENDING"}] (-> (json/read-json (:body result)) :buddy-requests)))))))
+        (is  (= [{:requester_id (str requester-id) :status "PENDING"}] (-> (json/read-json (:body result)) :buddy-requests)))))))

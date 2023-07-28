@@ -73,3 +73,7 @@ Next steps:
 Authorisation - change the include request to user_id so that a goal can be saved for the user that is authenticated
 Retrieve goals for user
 update a specific goal / how to?
+
+
+Questions:
+one transaction for two rows? resiliance!

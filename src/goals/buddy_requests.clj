@@ -2,8 +2,9 @@
   (:require
    [goals.persistance.buddy-requests :as persistance]
    [goals.persistance.users :as user-persistance]
-   [clojure.data.json :as json] 
-   [goals.auth :as auth]))
+   [clojure.data.json :as json]
+   [goals.auth :as auth]
+   [goals.buddy-requests :as buddy-requests]))
 
 
 (defn get-user-id [req]
@@ -16,8 +17,8 @@
 
 (defn add [req]
   (try
-    (prn "here")
-    (let [requestee-id (->
+    (let [buddy-request-id (random-uuid)
+          requestee-id (->
                         req
                         :parameters
                         :body
@@ -25,9 +26,7 @@
                         parse-uuid)
           ds (:ds req)
           requester-id (get-user-id req)]
-      (prn "requestee "(uuid? requestee-id))
-      (prn "requester "(uuid? requester-id))
-      (persistance/save requestee-id requester-id ds)
+      (persistance/save buddy-request-id requestee-id requester-id ds)
       {:status  200
        :headers {"Content-Type" "application/json"}
        :body  (json/write-str {:status "PENDING"})})
@@ -37,14 +36,33 @@
          :headers {"Content-Type" "text/html"}
          :body (str  "caught exception: " message)}))))
 
-(defn get-received-requests[req]
+(defn get-received-requests [req]
   (try
     (let [ds (:ds req)
           requestee-id (get-user-id req)
-          received-buddy-requests (persistance/get-received-requests requestee-id ds)] 
+          received-buddy-requests (persistance/get-received-requests requestee-id ds)]
       {:status  200
        :headers {"Content-Type" "application/json"}
        :body  (json/write-str {:buddy-requests received-buddy-requests})})
+    (catch Exception e
+      (let [message (.getMessage e)]
+        {:status 500
+         :headers {"Content-Type" "text/html"}
+         :body (str  "caught exception: " message)}))))
+
+(defn accept [req]
+  (try
+    (let [ds (:ds req)
+          buddy-request-id (->
+                            req
+                            :parameters
+                            :body
+                            :buddy-request-id
+                            parse-uuid)]
+      (persistance/accept buddy-request-id ds)
+      {:status  200
+       :headers {"Content-Type" "application/json"}
+       :body  (json/write-str {:status "ACCEPTED"})})
     (catch Exception e
       (let [message (.getMessage e)]
         {:status 500

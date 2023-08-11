@@ -34,9 +34,14 @@
                                          :headers {"authorization" requestee-auth-header}}
             received-buddy-requests (buddy-requests/get-received-requests received-buddy-requests-req)
             _ (assert  (= 1 (count (-> (json/read-json (:body received-buddy-requests)) :buddy-requests))))
-            _ (buddy-requests/accept {:parameters {:body {:buddy-request-id (-> (json/read-json (:body received-buddy-requests)) :buddy-requests first :id)}}
+            result-of-accepting (buddy-requests/accept {:parameters 
+                                                        {:body
+                                                         {:user-id-1 requester-id
+                                                          :user-id-2 (parse-uuid requestee-id)
+                                                          :buddy-request-id (-> (json/read-json (:body received-buddy-requests)) :buddy-requests first :id)}}
                                       :ds conn
                                       :headers {"authorization" requestee-auth-header}})
+            _ (assert (= 200 (:status result-of-accepting)) "failed to accept request")
             result (buddy-requests/get-received-requests received-buddy-requests-req)]
         (is (= 200 (:status result)))
         (is (= 1 (count (-> (json/read-json (:body result)) :buddy-requests))))

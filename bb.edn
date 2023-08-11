@@ -4,10 +4,10 @@
                   (clojure "-T:build" "test")
                   (finally (shell "docker rm -f db"))))
          test-locally (do
-                (try
-                  (clojure "-T:build" "test")))
+                        (try
+                          (clojure "-T:build" "test")))
          reset-db (do
-                (shell "docker rm -f db")
-                (shell "docker run -d --name db -p 5432:5432 -e POSTGRES_DB=goals -e POSTGRES_USER=goals -e POSTGRES_PASSWORD=goals postgres:alpine"))
+                    (shell "docker rm -f db")
+                    (shell "docker run -d --name db -p 5432:5432 -e POSTGRES_DB=goals -e POSTGRES_USER=goals -e POSTGRES_PASSWORD=goals postgres:alpine"))
          jar (clojure "-T:build" "ci")
          start (shell "docker compose up --build")}}

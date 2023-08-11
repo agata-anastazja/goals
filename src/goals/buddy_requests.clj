@@ -2,9 +2,9 @@
   (:require
    [goals.persistance.buddy-requests :as persistance]
    [goals.persistance.users :as user-persistance]
+   [goals.buddies :as buddies]
    [clojure.data.json :as json]
-   [goals.auth :as auth]
-   [goals.buddy-requests :as buddy-requests]))
+   [goals.auth :as auth]))
 
 
 (defn get-user-id [req]
@@ -23,7 +23,7 @@
                         :parameters
                         :body
                         :requestee-id
-                        parse-uuid)
+                        )
           ds (:ds req)
           requester-id (get-user-id req)]
       (persistance/save buddy-request-id requestee-id requester-id ds)
@@ -52,14 +52,33 @@
 
 (defn accept [req]
   (try
+    (prn "accepting")
+    
     (let [ds (:ds req)
           buddy-request-id (->
                             req
                             :parameters
                             :body
                             :buddy-request-id
-                            parse-uuid)]
+                            parse-uuid)
+          _ (prn buddy-request-id)
+          user-id-1 (->
+                     req
+                     :parameters
+                     :body
+                     :user-id-1)
+          _ (prn "user-id-1" user-id-1)
+          _ (prn "body " (->
+                  req
+                  :parameters
+                  :body))
+          user-id-2 (->
+                     req
+                     :parameters
+                     :body
+                     :user-id-2)]
       (persistance/accept buddy-request-id ds)
+      (buddies/add user-id-1 user-id-2 ds)
       {:status  200
        :headers {"Content-Type" "application/json"}
        :body  (json/write-str {:status "ACCEPTED"})})

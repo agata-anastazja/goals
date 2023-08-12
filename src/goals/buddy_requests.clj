@@ -23,7 +23,7 @@
                         :parameters
                         :body
                         :requestee-id
-                        )
+                        parse-uuid)
           ds (:ds req)
           requester-id (get-user-id req)]
       (persistance/save buddy-request-id requestee-id requester-id ds)
@@ -63,12 +63,14 @@
                      req
                      :parameters
                      :body
-                     :user-id-1)
+                     :user-id-1
+                     parse-uuid)
           user-id-2 (->
                      req
                      :parameters
                      :body
-                     :user-id-2)]
+                     :user-id-2
+                     parse-uuid)]
       (persistance/accept buddy-request-id ds)
       (buddies/add user-id-1 user-id-2 ds)
       {:status  200

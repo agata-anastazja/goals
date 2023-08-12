@@ -47,8 +47,10 @@
             result2 (buddies/get-buddies {:ds conn
                                           :headers {"authorization" requestee-auth-header}})]
         (is (= 200 (:status result1)))
-        (is (= 1 (count (-> (json/read-json (:body result1)) :buddies))))
-        #_(is  (= (str requester-id) (-> (json/read-json (:body result)) :buddies first :user_id_1)))
+        (is (= [(str requestee-id)] (-> (:body result1)
+                        json/read-json
+                        :buddies)))
         (is (= 200 (:status result2)))
-        (is (= 1 (count (-> (json/read-json (:body result2)) :buddies))))
-        (is (= 1 (-> (json/read-json (:body result2)) :buddies)))))))
+        (is (= [(str requester-id)] (-> (:body result2)
+                                       json/read-json
+                                       :buddies)))))))

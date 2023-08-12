@@ -1,7 +1,7 @@
 (ns goals.persistance.goals
-  (:require 
-             [next.jdbc :as jdbc]
-[next.jdbc.result-set :as rs]))
+  (:require
+   [next.jdbc :as jdbc]
+   [next.jdbc.result-set :as rs]))
 
 
 

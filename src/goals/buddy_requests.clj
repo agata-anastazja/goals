@@ -51,9 +51,7 @@
          :body (str  "caught exception: " message)}))))
 
 (defn accept [req]
-  (try
-    (prn "accepting")
-    
+  (try 
     (let [ds (:ds req)
           buddy-request-id (->
                             req
@@ -61,17 +59,11 @@
                             :body
                             :buddy-request-id
                             parse-uuid)
-          _ (prn buddy-request-id)
           user-id-1 (->
                      req
                      :parameters
                      :body
                      :user-id-1)
-          _ (prn "user-id-1" user-id-1)
-          _ (prn "body " (->
-                  req
-                  :parameters
-                  :body))
           user-id-2 (->
                      req
                      :parameters

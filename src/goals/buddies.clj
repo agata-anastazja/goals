@@ -9,11 +9,11 @@
   (try
     (do
       (let [user-id (auth/get-user-id req)
-            _ (prn "user-id" user-id)
-            results (persistance/get-buddies user-id (:ds req))] 
+            results (persistance/get-buddies user-id (:ds req))
+            buddies-ids (map #(get % :user_id_2) results)] 
         {:status  200
          :headers {"Content-Type" "application/json"}
-         :body  (json/write-str {:buddies results})}))
+         :body  (json/write-str {:buddies buddies-ids})}))
     (catch Exception e
       (let [message (.getMessage e)]
         {:status 500
@@ -28,10 +28,8 @@
     ;;   todo: validate that user-id-1 and user-id-2 are not already buddies
     ;;   todo: validate that user-id-1 and user-id-2 are not the same user
     ;;   todo: validate that user-id-1 and user-id-2 exist
-      (prn "add")
       (persistance/save user-id-1 user-id-2 ds)
       (persistance/save user-id-2 user-id-1 ds) 
-      (prn "here")
       {:status  200
        :headers {"Content-Type" "application/json"}
        :body  (json/write-str {:status "PENDING"})})

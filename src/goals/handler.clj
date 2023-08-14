@@ -1,8 +1,9 @@
 (ns goals.handler
   (:require
    [goals.goals :as goals]
-   [goals.users :as users] 
+   [goals.users :as users]
    [goals.buddy-requests :as buddy-requests]
+   [goals.ui :as ui]
    [goals.auth :as auth]
    [muuntaja.core :as m]
    [reitit.ring :as ring]
@@ -32,7 +33,12 @@
               ctx))})
 
 (def routes
-  [["/users"
+  [["/"
+    {:get {:handler ui/welcome}}]
+   ["/hello"
+    {:get {:handler ui/welcome}}]
+   
+   ["/users"
     {:post {:handler users/add
             :parameters {:body [:map {:closed false}
                                 [:username :string]

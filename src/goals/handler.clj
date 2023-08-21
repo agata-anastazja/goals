@@ -4,6 +4,7 @@
    [goals.users :as users] 
    [goals.buddy-requests :as buddy-requests]
    [goals.auth :as auth]
+   [goals.ui :as ui]
    [muuntaja.core :as m]
    [reitit.ring :as ring]
    [reitit.http :as http]
@@ -31,8 +32,11 @@
                 :content-type "application/json"})
               ctx))})
 
-(def routes
-  [["/users"
+(defn routes []
+  [["/hello" {:get 
+              {:handler ui/welcome}}]
+   
+   ["/users"
     {:post {:handler users/add
             :parameters {:body [:map {:closed false}
                                 [:username :string]
@@ -59,7 +63,7 @@
 (defn server
   [ds]
   (http/ring-handler
-   (http/router routes
+   (http/router (routes)
                 {:data {:coercion     malli/coercion
                         :muuntaja     m/instance
                         :interceptors [;; query params -> request map

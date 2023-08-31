@@ -34,7 +34,7 @@
 
 (defn routes []
   [["/" {:get
-              {:handler ui/welcome}}]
+         {:handler ui/welcome}}]
    
    ["/users"
     {:post {:handler users/add

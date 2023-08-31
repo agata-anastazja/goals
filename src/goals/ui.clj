@@ -8,4 +8,4 @@
   #_{:clj-kondo/ignore [:deprecated-var]}
   {:status  200
    :headers {"Content-Type" "text/html"}
-   :body  (markup/html [:span {:class "foo"} "Monkeys are adorable!"])})
+   :body  (markup/html [:span {:class "foo"} "Welcome to the world of accountability!"])})

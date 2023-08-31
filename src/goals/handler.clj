@@ -33,7 +33,7 @@
               ctx))})
 
 (defn routes []
-  [["/hello" {:get 
+  [["/" {:get
               {:handler ui/welcome}}]
    
    ["/users"

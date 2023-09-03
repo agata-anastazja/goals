@@ -40,7 +40,8 @@
   [["/" {:get
          {:handler ui/welcome}
          :post {:handler ui/welcome}}]
-   
+   ["/post-sign-up" {:get
+                     {:handler ui/post-sign-up}}]
   ["/users"
     {:post {:handler users/add
             :interceptors [params->keywords-interceptor]

@@ -16,9 +16,9 @@
     [:label {:for "password"} "password"]
     [:input {:type "text" :name "password" :id "password"}]
       ;;   <input type="submit" value="Subscribe!" />
-    
+
     [:input {:type "submit" :value "Register"}]]
-  
+
     ;; [:div {:class "form-group"}
     ;; ;;  <label for="name">Enter your name: </label>
     ;;  (markup/label {:class "control-label"} "email" "Email")
@@ -32,12 +32,12 @@
     ;; [:div {:class "form-group"}
     ;;  [:label
     ;;   (check-box {:ng-model "user.remember"} "user.remember-me") " Remember me"]]
-   
+
   ;;  [:pre "form = {{ user | json }}"]
    ])
 
-(defn index[]
-  
+(defn index []
+
   #_{:clj-kondo/ignore [:deprecated-var]}
   (markup/html [:span {:class "foo"} (subscribe)]))
 
@@ -52,3 +52,10 @@
   {:status  200
    :headers {"Content-Type" "text/html"}
    :body  (index)})
+
+
+(defn post-sign-up [req]
+  #_{:clj-kondo/ignore [:deprecated-var]}
+  {:status  200
+   :headers {"Content-Type" "text/html"}
+   :body  "thank you for signing up! tut!"})

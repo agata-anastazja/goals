@@ -12,8 +12,7 @@
           user (assoc params :user-id user-id)]
       (persistance/save user ds)
       {:status  302
-       :headers {"Content-Type" "application/json"
-                 "Location" "/post-sign-up"}})
+       :headers {"Location" "/post-sign-up"}})
     (catch Exception e
       (let [message (.getMessage e)]
         (cond

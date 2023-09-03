@@ -1,5 +1,6 @@
 (ns goals.ui
   (:require [hiccup.core :as markup]
+            [goals.users :as users]
             [clojure.data.json :as json]))
 
 
@@ -7,12 +8,12 @@
 (defn subscribe []
   [:div {:class "well"}
    [:div "text"]
-   [:form {:novalidate "" :role "form" :method "post"}
+   [:form {:novalidate "" :role "form" :method "post" :action "/users"}
     [:label {:for "username"} "username"]
       ;;  <input type="text" name="name" id="name" required />
     [:input {:type "text" :name "username" :id "username"}]
       ;;   <input type="submit" value="Subscribe!" />
-    [:input {:type "submit" :value "Register"}]]
+    [:input {:type "submit" :value "Register" }]]
   
     ;; [:div {:class "form-group"}
     ;; ;;  <label for="name">Enter your name: </label>
@@ -36,6 +37,11 @@
   #_{:clj-kondo/ignore [:deprecated-var]}
   (markup/html [:span {:class "foo"} (subscribe)]))
 
+;; (defn register [req]
+;;   (let [registration (user/add req)])
+;;   {:status  200
+;;    :headers {"Content-Type" "text/html"}
+;;    :body  ()})
 
 (defn welcome [req]
   #_{:clj-kondo/ignore [:deprecated-var]}

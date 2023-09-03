@@ -12,21 +12,26 @@
     (handler/server (jdbc/get-datasource {:jdbcUrl connection-url}))))
   
 
+(defn set-up-db []
+   (let [connection-url (or (System/getenv "DB_JDBC_URI")
+                           "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals")]
+    (migrate/migrate connection-url)))
+
 (defn -main
   [& args]
-  (let [connection-url (or (System/getenv "DB_JDBC_URI")
-                           "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals")]
-    (migrate/migrate connection-url)
-    (jetty/run-jetty #'app
-                     {:host   "0.0.0.0"
-                      :port   8080
-                      :join?  false
-                      :async? true})))
+  (set-up-db)
+  (jetty/run-jetty #'app
+                   {:host   "0.0.0.0"
+                    :port   8080
+                    :join?  false
+                    :async? true}))
 
 
 
 (comment
-  (defonce server (jetty/run-jetty #'app {:host   "0.0.0.0"
+      (set-up-db)
+
+  (def server (jetty/run-jetty #'app {:host   "0.0.0.0"
                                            :port   8080
                                            :join?  false
                                            :async? true}))

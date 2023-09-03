@@ -6,6 +6,7 @@
          test-locally (do
                         (try
                           (clojure "-T:build" "test")))
+         set-db (shell "docker run -d --name db -p 5432:5432 -e POSTGRES_DB=goals -e POSTGRES_USER=goals -e POSTGRES_PASSWORD=goals postgres:alpine")
          reset-db (do
                     (shell "docker rm -f db")
                     (shell "docker run -d --name db -p 5432:5432 -e POSTGRES_DB=goals -e POSTGRES_USER=goals -e POSTGRES_PASSWORD=goals postgres:alpine"))

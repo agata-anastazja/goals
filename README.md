@@ -16,8 +16,11 @@ babashka
 
     $ bash < <(curl -s https://raw.githubusercontent.com/babashka/babashka/master/install)
 
-## Usage
+## Running locally
 
+Set up local postgres with
+
+```bb set-db```
 
 Run the project directly, via `:main-opts` (`-m goals.api`):
 
@@ -26,7 +29,7 @@ Run the project directly, via `:main-opts` (`-m goals.api`):
 Integration tests require a test db. To run them run:
     bb test
 
-Run the project's CI pipeline and build an uberjar (this will fail until you edit the tests to pass):
+Run the project's CI pipeline and build an uberjar:
 
     $ clojure -T:build ci
 
@@ -48,12 +51,48 @@ If you remove `version` from `build.clj`, the uberjar will become `target/api-st
 1. an authenticated user can add and complete goals for themselves
     - done:
         adding goals
-        authentication
+        basic authentication
         completing goals
     - todo:
         based on a level the deadline is created
 
 Link to the board with the rest of the plan https://miro.com/app/board/uXjVP0G5xQU=/?share_link_id=472777659691
+
+## Deployment
+make a jar with
+bb build
+<!--18.170.226.130 or whichever IP I have -->
+rsync api-0.1.0-SNAPSHOT.jar ubuntu@18.170.226.130:goals.jar
+ssh ubuntu@18.170.226.130
+sudo apt update 
+sudo apt install default-jre
+java -version
+sudo apt install postgresql postgresql-contrib
+sudo -i -u postgres
+createuser --interactive
+psql
+ALTER USER goals with password 'goals';
+createdb goals
+(quit psql user)
+sudo vim /etc/systemd/system/goals.service
+
+[Unit]
+Description=goals service
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart=java -jar /home/ubuntu/goals.jar
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl daemon-reload 
+sudo systemctl enable goals.service 
+sudo systemctl start goals.service 
+sudo systemctl status goals.service 
 
 ## License
 
@@ -66,13 +105,7 @@ _section of the `README.md` file!_
 
 Distributed under the Eclipse Public License version 1.0.
 
-Completed:
-Authentication
 
-Next steps:
-Authorisation - change the include request to user_id so that a goal can be saved for the user that is authenticated
-Retrieve goals for user
-update a specific goal / how to?
 
 
 Questions:

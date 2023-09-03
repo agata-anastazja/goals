@@ -10,6 +10,7 @@
   (let [connection-url (or (System/getenv "DB_JDBC_URI") 
                            "jdbc:postgresql://127.0.0.1:5432/goals?user=goals&password=goals")]
     (handler/server (jdbc/get-datasource {:jdbcUrl connection-url}))))
+  
 
 (defn -main
   [& args]

@@ -21,6 +21,10 @@
   [ds]
   {:enter #(assoc-in % [:request :ds] ds)})
 
+(def params->keywords-interceptor
+  {:enter (fn[{{params :params} :request :as ctx}]
+            (assoc-in ctx [:request :params] (into {} (map (fn [[k v]] [(keyword k) v]) params))))})
+
 (def auth-interceptor
   {:enter (fn [{{{:strs [authorization]} :headers
                  ds :ds} :request :as ctx}]
@@ -37,11 +41,12 @@
          {:handler ui/welcome}
          :post {:handler ui/welcome}}]
    
-   ["/users"
+  ["/users"
     {:post {:handler users/add
-            :parameters {:body [:map {:closed false}
-                                [:username :string]
-                                [:password :string]]}}}]
+            :interceptors [params->keywords-interceptor]
+            :parameters {:form [:map {:closed false}
+                                     [:username :string]
+                                     [:password :string]]}}}]
    ["/buddy-requests" {:post {:handler buddy-requests/add 
                               :parameters {:body [:map {:closed false}
                                                   [:requestee-id :string]]}}
@@ -63,10 +68,11 @@
 
 (defn server
   [ds]
+  (println "starting server")
   (http/ring-handler
    (http/router (routes)
-                {:data {:coercion     malli/coercion
-                        :muuntaja     m/instance
+                {:data {#_#_:coercion     malli/coercion
+                        #_#_:muuntaja     m/instance
                         :interceptors [;; query params -> request map
                                        (parameters/parameters-interceptor)
                             ;; verify format of data

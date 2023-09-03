@@ -1,20 +1,19 @@
 (ns goals.users
   (:require
    [goals.persistance.users :as persistance]
-   [clojure.string :as str]
-   [clojure.data.json :as json]))
+   [clojure.string :as str]))
 
 (defn user-exists? [ds username password]
   (some? (persistance/get-user ds username password)))
 
-(defn add [{{:keys [body]} :parameters ds :ds}] 
+(defn add [{params :params ds :ds :as req} ]
   (try
     (let [user-id  (random-uuid)
-          user (assoc body :user-id user-id )]
-      (persistance/save user ds)
+          user (assoc params :user-id user-id )]
+      #_(persistance/save user ds)
       {:status  200
        :headers {"Content-Type" "application/json"}
-       :body  (json/write-str {:id user-id})})
+       :body  "tut"})
     (catch Exception e
       (let [message (.getMessage e)]
         (cond

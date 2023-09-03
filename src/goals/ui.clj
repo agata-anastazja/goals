@@ -12,8 +12,12 @@
     [:label {:for "username"} "username"]
       ;;  <input type="text" name="name" id="name" required />
     [:input {:type "text" :name "username" :id "username"}]
+    [:br]
+    [:label {:for "password"} "password"]
+    [:input {:type "text" :name "password" :id "password"}]
       ;;   <input type="submit" value="Subscribe!" />
-    [:input {:type "submit" :value "Register" }]]
+    
+    [:input {:type "submit" :value "Register"}]]
   
     ;; [:div {:class "form-group"}
     ;; ;;  <label for="name">Enter your name: </label>

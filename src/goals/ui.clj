@@ -1,35 +1,48 @@
 (ns goals.ui
   (:require [hiccup.core :as markup]
-            [goals.users :as users]
-            [clojure.data.json :as json]))
+            [goals.auth :as auth]))
 
 
+(defn logged-in? [headers]
+  (tap> headers)
+  (if (:authorization headers)
+    (let [[username _] (auth/decode-auth (:authorization headers))]
+      (str "Welcome " username "!")) "Please log in!"))
 
-(defn subscribe []
+(defn subscribe [req]
   [:div {:class "well"}
-   [:div "text"]
-   [:form {:novalidate "" :role "form" :method "post" :action "/users"}
-    [:label {:for "username"} "username"]
-      ;;  <input type="text" name="name" id="name" required />
-    [:input {:type "text" :name "username" :id "username"}]
-    [:br]
-    [:label {:for "password"} "password"]
-    [:input {:type "text" :name "password" :id "password"}]
-      ;;   <input type="submit" value="Subscribe!" />
+   [:div "Register"
+    [:form {:novalidate "" :role "form" :method "post" :action "/users"}
+     [:label {:for "username"} "username"]
+     [:input {:type "text" :name "username" :id "username"}]
+     [:br]
+     [:label {:for "password"} "password"]
+     [:input {:type "text" :name "password" :id "password"}]
+     [:input {:type "submit" :value "Register"}]
+     [:br]]]
+   [:div "Log in"
+    [:form {:novalidate "" :role "form" :method "post" :action "/log-in"}
+     [:label {:for "username"} "username"]
+     [:input {:type "text" :name "username" :id "username"}]
+     [:br]
+     [:label {:for "password"} "password"]
+     [:input {:type "text" :name "password" :id "password"}]
+     [:input {:type "submit" :value "Log in"}]
+     [:br]]]
+   [:div (logged-in? (:headers req))]])
 
-    [:input {:type "submit" :value "Register"}]] ])
-
-(defn index []
+(defn index [req]
 
   #_{:clj-kondo/ignore [:deprecated-var]}
-  (markup/html [:span {:class "foo"} (subscribe)]))
+  (markup/html [:span {:class "foo"} (subscribe req)]))
 
 
 (defn welcome [req]
   #_{:clj-kondo/ignore [:deprecated-var]}
-  {:status  200
-   :headers {"Content-Type" "text/html"}
-   :body  (index)})
+ 
+    {:status  200
+     :headers {"Content-Type" "text/html"}
+     :body  (index req)})
 
 
 (defn post-sign-up [req]

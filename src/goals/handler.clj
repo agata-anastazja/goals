@@ -42,6 +42,9 @@
          :post {:handler ui/welcome}}]
    ["/post-sign-up" {:get
                      {:handler ui/post-sign-up}}]
+   ["/log-in" {:post {:handler users/log-in
+                      :parameters {:body [[:username :string]
+                                          [:password :string]]}}}]
   ["/users"
     {:post {:handler users/add
             :interceptors [params->keywords-interceptor]

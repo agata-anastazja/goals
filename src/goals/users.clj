@@ -1,4 +1,5 @@
 (ns goals.users
+  (:import [java.util Base64])
   (:require
    [goals.persistance.users :as persistance]
    [clojure.string :as str]))
@@ -25,13 +26,24 @@
            :headers {"Content-Type" "text/html"}
            :body (str  "User not created! Save yourself! error message: " message)})))))
 
+
+
+(defn auth-header [username password]
+  (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (str username ":" password)))))
+
+
+
 (defn log-in [{params :params ds :ds :as req}]
     (try
-      (let [user-exists? (user-exists? ds (:username params) (:password params))]
-
+      (let [username (:username params)
+            password (:password params)
+            user-exists? (user-exists? ds username password)
+            auth-header (auth-header username password)]
+     
         {:status  302
+         :authorization auth-header
          :headers {"Location" "/"
-                   "Authorization" (str "Basic " (str/join ":" [(:username params) (:password params)]))}})
+                   }})
       (catch Exception e
         (let [message (.getMessage e)] 
           {:status 500

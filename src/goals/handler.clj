@@ -1,7 +1,8 @@
 (ns goals.handler
   (:require
+   [clojure.tools.logging :as log]
    [goals.goals :as goals]
-   [goals.users :as users] 
+   [goals.users :as users]
    [goals.buddy-requests :as buddy-requests]
    [goals.auth :as auth]
    [goals.ui :as ui]
@@ -28,12 +29,16 @@
 (def auth-interceptor
   {:enter (fn [{{{:strs [authorization]} :headers
                  ds :ds} :request :as ctx}]
+            (log/trace "Entering auth interceptor")
             (if-not (auth/authorised? ds authorization)
-              (sie-context/terminate
-               ctx
-               {:status 401
-                :body {:message "Not authorised"}
-                :content-type "application/json"})
+              (let [result
+                    (sie-context/terminate
+                     ctx
+                     {:status 401
+                      :body "Not authorised" #_{:message "Not authorised"}
+                      :content-type "application/json"})]
+                (log/trace "About to return 'not authorised' response")
+                result)
               ctx))})
 
 (defn routes []

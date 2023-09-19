@@ -1,10 +1,11 @@
 (ns goals.goals
-    (:require
-     [goals.parser :as parser]
-     [goals.persistance.goals :as persistance]
-     [goals.persistance.users :as user-persistance]
-     [clojure.data.json :as json]
-     [goals.auth :as auth]))
+  (:require
+   [clojure.tools.logging :as log]
+   [goals.parser :as parser]
+   [goals.persistance.goals :as persistance]
+   [goals.persistance.users :as user-persistance]
+   [clojure.data.json :as json]
+   [goals.auth :as auth]))
 
 (defn valid-goal? [goal ds]
   (or (nil? (:goal-parent goal))
@@ -79,6 +80,7 @@
 
 
 (defn get-all-goals[req]
+  (log/trace "Got to inside of get-all-goals")
   (try
     (let [level (->
                  req
@@ -90,9 +92,10 @@
           goals (persistance/get-all-goals-with-user ds user-id level)] 
       {:status  200
        :headers {"Content-Type" "application/json"}
-       :body  goals})
+       :body  "foo"})
     (catch Exception e
-      (let [message (.getMessage e)]
+      (log/error e "Unexpected exception thrown when trying to get all goals")
+      #_(let [message (.getMessage e)]
         {:status 500
          :headers {"Content-Type" "text/html"}
          :body (str  "caught exception: " message)}))))

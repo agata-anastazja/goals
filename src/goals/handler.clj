@@ -69,7 +69,6 @@
 
 (defn server
   [ds]
-  (println "starting server")
   (http/ring-handler
    (http/router (routes)
                 {:data {#_#_:coercion     malli/coercion

@@ -4,7 +4,8 @@
     [goals.handler :as handler]
     [goals.migrate :as migrate]
     [ring.adapter.jetty :as jetty]
-    [next.jdbc :as jdbc]))
+    [next.jdbc :as jdbc]
+    [clojure.tools.logging :as log]))
 
 (def app
   (let [connection-url (or (System/getenv "DB_JDBC_URI") 
@@ -20,6 +21,7 @@
 (defn -main
   [& args]
   (set-up-db)
+  (log/info "starting server")
   (jetty/run-jetty #'app
                    {:host   "0.0.0.0"
                     :port   8080
@@ -35,5 +37,5 @@
                                            :port   8080
                                            :join?  false
                                            :async? true}))
-  (.stop server)
+  #_(.stop server)
   )

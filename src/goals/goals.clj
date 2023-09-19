@@ -95,7 +95,7 @@
        :body  "foo"})
     (catch Exception e
       (log/error e "Unexpected exception thrown when trying to get all goals")
-      #_(let [message (.getMessage e)]
+      (let [message (.getMessage e)]
         {:status 500
          :headers {"Content-Type" "text/html"}
          :body (str  "caught exception: " message)}))))

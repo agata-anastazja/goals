@@ -76,10 +76,10 @@
   [ds]
   (http/ring-handler
    (http/router (routes)
-                {:data {#_#_:coercion     malli/coercion
-                        #_#_:muuntaja     m/instance
+                {:data {:coercion     malli/coercion
+                        :muuntaja     m/instance
                         :interceptors [;; query params -> request map
-                                       (parameters/parameters-interceptor)
+                                      (parameters/parameters-interceptor)
                             ;; verify format of data
                                        (muuntaja/format-negotiate-interceptor)
                             ;; verify response data

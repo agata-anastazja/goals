@@ -10,21 +10,19 @@
 (deftest test-app
   (testing "create a user"
     (with-open [conn (test-utils/create-connection)]
-      (let [result (users/add {:parameters
-                               {:body {:username "Rahul"
-                                       :password "Secretpassword"}}
+      (let [result (users/add {:params {:username "Rahul"
+                                        :password "Secretpassword"}
                                :ds conn})
             rows (jdbc/execute! conn ["select * from users"] {:builder-fn rs/as-unqualified-lower-maps})
             last-inserted-row (dissoc (last rows) :id)]
-        (is (=  200 (:status result)))
+        (is (=  302 (:status result)))
         (is (= last-inserted-row  {:username "Rahul"
                                    :password "Secretpassword"})))))
   
   (testing "only creates users with unique usernames" 
     (with-open [conn (test-utils/create-connection)]
-      (let [_ (users/add {:parameters
-                          {:body {:username "Rahul"
-                                  :password "Secretpassword"}}
+      (let [_ (users/add {:params {:username "Rahul"
+                                  :password "Secretpassword"}
                           :ds conn})
             result (users/add {:parameters
                                {:body {:username "Rahul"

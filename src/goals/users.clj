@@ -8,7 +8,8 @@
 
 (defn add [{params :params ds :ds :as req} ]
   (try
-    (let [user-id  (random-uuid)
+    (let [
+          user-id  (random-uuid)
           user (assoc params :user-id user-id)]
       (persistance/save user ds)
       {:status  302

@@ -24,8 +24,7 @@
       (let [_ (users/add {:params {:username "Rahul"
                                   :password "Secretpassword"}
                           :ds conn})
-            result (users/add {:parameters
-                               {:body {:username "Rahul"
-                                       :password "Secretpassword"}}
+            result (users/add {:params {:username "Rahul"
+                                      :password "Secretpassword"}
                                :ds conn})]
-        (is (= (:status result)  409))))))
+        (is (= 409 (:status result)))))))

@@ -2,8 +2,6 @@
   (:require
    [goals.goals :as goals]
    [clojure.test :refer :all]
-   [next.jdbc :as jdbc]
-   [next.jdbc.result-set :as rs]
    [clojure.data.json :as json]
    [goals.integration.test-utils :as test-utils]
    [goals.persistance.users :as user-persistance]))
@@ -106,18 +104,20 @@
                                     :headers {"authorization" auth-header}}
             yearly-goal-res (goals/add create-yearly-goal-req)
             parent-id (-> (json/read-json (:body yearly-goal-res)) :id parse-uuid)
+            _ (assert (uuid? parent-id) "failed to get parent id")
+
             create-monthly-goal-req {:parameters {:body {:description "Have fun for a month"
                                                          :level 2
                                                          :goal-parent parent-id}}
                                      :ds conn
-                                     :headers {"authorization" auth-header}}
+                                     :headers {"authorization" auth-header}} 
             monthly-goal (goals/add create-monthly-goal-req)
             child-id (-> (json/read-json (:body monthly-goal)) :id parse-uuid)
             req {:parameters {:body {:level 2}}  
                  :ds conn
                  :headers {"authorization" auth-header}}
             result (goals/get-all-goals-with-their-parent req)
-            first-result (first (:body result))]
+            first-result (first (:goals-with-parent (:body result)))]
         (is (= 200 (:status result)))
         (is (= 1 (-> (:body result) count)))
         (is (= child-id (-> first-result :id )))

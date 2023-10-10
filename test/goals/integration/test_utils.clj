@@ -23,7 +23,7 @@
 (defn default-auth-header[conn]
   (let [user {:username "RahulUnique"
               :password "secretsecret"}
-        user-req {:parameters {:body user}
+        user-req {:params user
                   :ds conn}
         _ (ensure-user user-req)]
     (auth-header user)))

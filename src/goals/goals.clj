@@ -1,6 +1,8 @@
 (ns goals.goals
   (:require
    [clojure.tools.logging :as log]
+   [next.jdbc :as jdbc]
+   [next.jdbc.result-set :as rs]
    [goals.parser :as parser]
    [goals.persistance.goals :as persistance]
    [goals.persistance.users :as user-persistance]
@@ -86,13 +88,13 @@
                  req
                  :parameters
                  :body
-                 :level)
+                 :level) 
           user-id (get-user-id req)
           ds (:ds req)
           goals (persistance/get-all-goals-with-user ds user-id level)] 
       {:status  200
        :headers {"Content-Type" "application/json"}
-       :body  "foo"})
+       :body {:goals goals}})
     (catch Exception e
       (log/error e "Unexpected exception thrown when trying to get all goals")
       (let [message (.getMessage e)]
@@ -103,13 +105,15 @@
 
 (defn get-all-goals-with-their-parent [req]
   (try
-    (let [goals (-> (get-all-goals req) :body)
+    (let [goals (-> (get-all-goals req) :body :goals)
           ds (:ds req)
-          goals-with-parent (mapv (fn [goal] (assoc goal :goal-parent (persistance/get-goal-from-db (:goal_parent goal) ds))) goals)]
+          goals-with-parent (mapv (fn [goal]
+                                    (assoc goal :goal-parent (persistance/get-goal-from-db (:goal_parent goal) ds))) goals)]
       {:status  200
        :headers {"Content-Type" "application/json"}
-       :body  goals-with-parent})
+       :body  {:goals-with-parent goals-with-parent}})
     (catch Exception e
+       (log/error e "Unexpected exception thrown when trying to get all goals")
       {:status 500
        :headers {"Content-Type" "text/html"}
        :body (str  "caught exception: " (.getMessage e))})))

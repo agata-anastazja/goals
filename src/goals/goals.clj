@@ -92,7 +92,7 @@
           goals (persistance/get-all-goals-with-user ds user-id level)] 
       {:status  200
        :headers {"Content-Type" "application/json"}
-       :body  "foo"})
+       :body goals})
     (catch Exception e
       (log/error e "Unexpected exception thrown when trying to get all goals")
       (let [message (.getMessage e)]

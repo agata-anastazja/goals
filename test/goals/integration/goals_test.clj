@@ -70,7 +70,7 @@
 (deftest get-user-test
   (testing "get goals for a user"
     (with-open [conn (test-utils/create-connection)]
-      (let [auth-header (test-utils/default-auth-header conn) 
+      (let [auth-header (test-utils/default-auth-header conn)
             req {:parameters {:body {:description "Rahuls has fun for a year"
                                      :level 3}}
                  :ds conn

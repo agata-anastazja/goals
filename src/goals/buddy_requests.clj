@@ -54,6 +54,7 @@
          :headers {"Content-Type" "text/html"}
          :body (str  "caught exception: " message)}))))
 
+;; What's in the request?
 (defn accept [req]
   (try 
     (let [ds (:ds req)
@@ -82,3 +83,24 @@
         {:status 500
          :headers {"Content-Type" "text/html"}
          :body (str  "caught exception: " message)}))))
+
+;; Either you could create some sort of wider "business logic" function that does the work of calling the DB functions in the right order etc
+
+;; You probably want a function that does both these things for you
+(defn business-logic []
+      (persistance/accept buddy-request-id ds)
+      (buddies/add (parse-uuid user-id-1) user-id-2 ds)
+  )
+
+(declare create-mock-db)
+
+(defn accept-2 [ds buddy-request-id acceptee-user-id accepter-user-id])
+
+(defn accept-2-test []
+  (let [db (create-mock-db)
+        buddy-request-id "123"
+        ]
+    (accept-2 db buddy-request-id "123" "456")
+  ;; Doesn't return any data; it just updates the database, or otherwise throws an exception
+    )
+  )

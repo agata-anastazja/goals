@@ -82,7 +82,6 @@
 
 
 (defn get-all-goals[req]
-  (log/trace "Got to inside of get-all-goals")
   (try
     (let [level (->
                  req

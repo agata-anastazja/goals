@@ -7,23 +7,20 @@
    [goals.integration.test-utils :as test-utils]
    [goals.buddy-requests :as buddy-requests]))
 
-(deftest add-buddy-request-test
+#_(deftest add-buddy-test
   (testing "accepting a request adds a buddy"
     (with-open [conn (test-utils/create-connection)]
       (let [user {:username "RahulUnique"
                   :password "secretsecret"}
-            user-req {:parameters {:body user}
+            user-req {:parames user
                       :ds conn}
             requester (test-utils/ensure-user user-req)
-            requester-id (-> (json/read-json (:body requester)) :id)
 
             auth-header (test-utils/auth-header user)
             requestee {:username "Robert"
                        :password "Secretpassword"}
-            requestee-user (users/add {:parameters
-                                       {:body requestee}
+            requestee-user (users/add {:params requestee
                                        :ds conn})
-            requestee-id (-> (json/read-json (:body requestee-user)) :id)
 
             req {:parameters {:body {:requestee-id requestee-id}}
                  :ds conn

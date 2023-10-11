@@ -1,12 +1,13 @@
 (ns goals.users
   (:require
    [goals.persistance.users :as persistance]
+   [clojure.tools.logging :as log]
    [clojure.string :as str]))
 
 (defn user-exists? [ds username password]
   (some? (persistance/get-user ds username password)))
 
-(defn add [{params :params ds :ds :as req} ]
+(defn add [{params :params ds :ds} ]
   (try
     (let [
           user-id  (random-uuid)

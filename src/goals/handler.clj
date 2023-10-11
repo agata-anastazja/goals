@@ -29,7 +29,6 @@
 (def auth-interceptor
   {:enter (fn [{{{:strs [authorization]} :headers
                  ds :ds} :request :as ctx}]
-            (log/trace "Entering auth interceptor")
             (if-not (auth/authorised? ds authorization)
               (let [result
                     (sie-context/terminate
@@ -37,7 +36,6 @@
                      {:status 401
                       :body "Not authorised" #_{:message "Not authorised"}
                       :content-type "application/json"})]
-                (log/trace "About to return 'not authorised' response")
                 result)
               ctx))})
 

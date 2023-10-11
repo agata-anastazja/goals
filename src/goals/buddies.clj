@@ -1,6 +1,7 @@
 (ns goals.buddies
    (:require
     [goals.persistance.buddies :as persistance]
+    [clojure.tools.logging :as log]
     [clojure.data.json :as json]
     [goals.auth :as auth]))
 
@@ -30,9 +31,7 @@
     ;;   todo: validate that user-id-1 and user-id-2 exist
       (persistance/save user-id-1 user-id-2 ds)
       (persistance/save user-id-2 user-id-1 ds) 
-      {:status  200
-       :headers {"Content-Type" "application/json"}
-       :body  (json/write-str {:status "PENDING"})})
+      {:status  200})
     (catch Exception e
       (let [message (.getMessage e)]
         {:status 500
